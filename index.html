@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Зеркало в тени леса - Интерактивное чтение</title>
+    <title>Зеркало в тени леса</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
-
-        /* Базовые стили */
         * {
             margin: 0;
             padding: 0;
@@ -15,11 +12,92 @@
         }
 
         body {
-            font-family: 'Cormorant Garamond', serif;
-            background: #0d0d0d;
-            color: #dcdcdc;
+            font-family: 'Georgia', serif;
+            background: #0a0f1a;
+            color: #e8e8e8;
             overflow-x: hidden;
-            scroll-behavior: smooth;
+            position: relative;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Анимированный фон - лес и звезды */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .forest-silhouette {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, #000, transparent);
+            opacity: 0.4;
+        }
+
+        .floating-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(139, 195, 74, 0.3);
+            border-radius: 50%;
+            animation: float-leaf 12s infinite linear;
+        }
+
+        @keyframes float-leaf {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* Навигация */
@@ -28,422 +106,1003 @@
             top: 0;
             left: 0;
             width: 100%;
-            background: rgba(13, 13, 13, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 100;
+            background: rgba(10, 15, 26, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
             padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease-in-out;
+            border-bottom: 2px solid rgba(139, 195, 74, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: top 0.3s ease-in-out;
+        }
+
+        .navigation.hidden {
+            top: -100px;
         }
 
         .nav-container {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
-            padding: 0 10px;
+            gap: 15px;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .nav-item {
-            color: #ccc;
+            color: #b0b0b0;
             text-decoration: none;
-            font-size: 14px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-item.active {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-            border-color: rgba(255, 107, 107, 0.5);
-        }
-
-        /* Контейнер для глав */
-        .container {
-            max-width: 800px;
-            margin: 120px auto 40px;
-            padding: 0 20px;
-        }
-
-        /* Общие стили для глав */
-        .chapter {
-            min-height: 80vh;
-            padding: 80px 40px;
-            margin-bottom: 60px;
-            background: rgba(20, 20, 20, 0.7);
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+            background: rgba(139, 195, 74, 0.05);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.8s ease-in-out;
         }
 
-        .chapter::before {
+        .nav-item::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: -1;
+            background: linear-gradient(90deg, transparent, rgba(139, 195, 74, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #fff;
+            background: rgba(139, 195, 74, 0.2);
+            border-color: rgba(139, 195, 74, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 195, 74, 0.3);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, rgba(139, 195, 74, 0.3), rgba(76, 175, 80, 0.3));
+            color: #8bc34a;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 900px;
+            margin: 100px auto 0;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Базовые стили секций */
+        .chapter {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(50px);
             transition: all 1s ease;
-            opacity: 0.15;
+            padding: 40px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px; /* Для демонстрации скролла */
+        }
+
+        .chapter.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .chapter h2 {
-            font-size: 2.5em;
+            font-size: 2.2em;
+            margin-bottom: 25px;
             text-align: center;
-            margin-bottom: 30px;
-            color: #ff6b6b;
-            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
-            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
         }
 
         .chapter p {
-            line-height: 1.8;
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             font-size: 1.1em;
-            text-align: justify;
+            position: relative;
+            z-index: 2;
         }
 
-        .chapter em {
-            color: #ffd93d;
-            font-style: italic;
+        /* Специфичные стили для каждой главы */
+        /* Заголовок */
+        #chapter-0 {
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.1), rgba(76, 175, 80, 0.05));
+            border: 2px solid rgba(139, 195, 74, 0.3);
+            text-align: center;
         }
 
-        .quote {
-            font-style: italic;
-            font-size: 1.2em;
-            color: #ffd93d;
-            margin: 30px 0;
-            padding: 20px;
-            border-left: 3px solid #ff6b6b;
-            background: rgba(255, 217, 61, 0.05);
-            border-radius: 0 10px 10px 0;
+        #chapter-0 h1 {
+            font-size: 3.5em;
+            background: linear-gradient(45deg, #8bc34a, #4caf50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(139, 195, 74, 0.3);
+        }
+
+        /* Глава I - Прибытие */
+        #chapter-1 {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.1), rgba(48, 63, 159, 0.05));
+            border-left: 5px solid #3f51b5;
             position: relative;
         }
 
-        /* Уникальные стили для каждой главы */
-        /* Глава I. Прибытие: Туман и неопределённость */
-        #ch1 {
-            background: radial-gradient(circle at 70% 30%, rgba(150, 150, 180, 0.05), rgba(20, 20, 30, 0.8));
-        }
-
-        #ch1::before {
-            background: url('https://i.imgur.com/kS9y3hB.png') no-repeat center center/cover; /* Изображение туманного леса */
-            opacity: 0.2;
-        }
-
-        /* Глава II. Лисёнок: Теплота и осторожность */
-        #ch2 {
-            background: radial-gradient(circle at 20% 80%, rgba(200, 150, 100, 0.05), rgba(30, 20, 20, 0.8));
-        }
-
-        #ch2::before {
-            background: url('https://i.imgur.com/rN9e8vJ.png') no-repeat center center/cover; /* Изображение лисёнка */
-            opacity: 0.15;
-        }
-
-        /* Глава III. Отражения: Разоблачение и внутренний диалог */
-        #ch3 {
-            background: rgba(30, 30, 30, 0.9);
-            transform: scale(1.02);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
-        }
-
-        #ch3::before {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            opacity: 0.15;
-        }
-
-        /* Глава IV. Техника «Голосов в круге»: Структура и разделение */
-        #ch4 {
-            background: rgba(25, 35, 25, 0.8);
-            border: 1px solid rgba(150, 255, 150, 0.2);
-        }
-
-        #ch4::before {
-            background: linear-gradient(90deg, rgba(150, 255, 150, 0.1), transparent);
-        }
-
-        /* Глава V. Метод «Свидетель»: Мудрость и наблюдательность */
-        #ch5 {
-            background: rgba(30, 20, 40, 0.8);
-            border: 1px solid rgba(200, 150, 255, 0.2);
-        }
-
-        #ch5::before {
-            background: radial-gradient(circle at center, rgba(200, 150, 255, 0.1), transparent 70%);
-        }
-
-        /* Глава VI. Ритуал «Возвращения тени»: Огонь и очищение */
-        #ch6 {
-            background: linear-gradient(180deg, rgba(50, 30, 20, 0.8), rgba(20, 20, 20, 0.8));
-            border: 1px solid rgba(255, 150, 100, 0.3);
-        }
-
-        #ch6::before {
-            background: url('https://i.imgur.com/8Qp4Z0t.png') no-repeat bottom center/contain; /* Изображение тлеющих углей */
-            opacity: 0.2;
-        }
-
-        /* Глава VII. Метод «Внутреннего компаса»: Направление и свет */
-        #ch7 {
-            background: radial-gradient(circle at top right, rgba(255, 217, 61, 0.1), rgba(20, 20, 20, 0.8));
-            border: 1px solid rgba(255, 217, 61, 0.2);
-        }
-
-        #ch7::before {
-            background: url('https://i.imgur.com/uR2N8mC.png') no-repeat top right/40%; /* Изображение компаса */
+        #chapter-1::before {
+            content: '🚂';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
             opacity: 0.3;
+            animation: train-arrival 3s ease-in-out infinite;
         }
 
-        /* Глава VIII. Техника «Ежедневного свидетельства»: Структура и самоанализ */
-        #ch8 {
-            background: rgba(25, 25, 25, 0.9);
-            box-shadow: 0 0 30px rgba(255, 217, 61, 0.1);
+        @keyframes train-arrival {
+            0%, 100% {
+                transform: translateX(10px);
+            }
+            50% {
+                transform: translateX(-10px);
+            }
         }
 
-        #ch8::before {
-            background: linear-gradient(180deg, rgba(255, 217, 61, 0.1) 0%, transparent 50%);
+        #chapter-1 h2 {
+            color: #5c6bc0;
         }
 
-        /* Глава IX. Письмо через полгода: Плоды исцеления */
-        #ch9 {
-            background: radial-gradient(circle at 50% 50%, rgba(200, 255, 200, 0.05), rgba(20, 30, 20, 0.8));
-            border: 1px solid rgba(150, 255, 150, 0.3);
+        /* Глава II - Лисёнок */
+        #chapter-2 {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 111, 0, 0.05));
+            border-left: 5px solid #ff9800;
+            position: relative;
         }
 
-        /* Глава X. Возвращение: Выбор и мудрость */
-        #ch10 {
-            background: rgba(30, 30, 35, 0.9);
+        #chapter-2::before {
+            content: '🦊';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: fox-movement 4s ease-in-out infinite;
         }
 
-        #ch10::before {
-            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+        @keyframes fox-movement {
+            0%, 100% {
+                transform: rotate(-5deg);
+            }
+            50% {
+                transform: rotate(5deg);
+            }
         }
 
-        /* Эпилог: Завершённость и новый путь */
+        #chapter-2 h2 {
+            color: #ffb74d;
+        }
+
+        /* Глава III - Отражения */
+        #chapter-3 {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(123, 31, 162, 0.05));
+            border-left: 5px solid #9c27b0;
+            position: relative;
+        }
+
+        #chapter-3::before {
+            content: '🪞';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.3;
+            animation: mirror-reflect 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes mirror-reflect {
+            0% {
+                transform: scaleX(1);
+            }
+            100% {
+                transform: scaleX(-1);
+            }
+        }
+
+        #chapter-3 h2 {
+            color: #ba68c8;
+        }
+
+        /* Глава IV - Голоса в круге */
+        #chapter-4 {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.1), rgba(0, 121, 107, 0.05));
+            border-left: 5px solid #009688;
+            position: relative;
+        }
+
+        #chapter-4::before {
+            content: '💭';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: thought-bubble 3s ease-in-out infinite;
+        }
+
+        @keyframes thought-bubble {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        #chapter-4 h2 {
+            color: #4db6ac;
+        }
+
+        /* Глава V - Свидетель */
+        #chapter-5 {
+            background: linear-gradient(135deg, rgba(121, 85, 72, 0.1), rgba(93, 64, 55, 0.05));
+            border-left: 5px solid #795548;
+            position: relative;
+        }
+
+        #chapter-5::before {
+            content: '🦉';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: owl-wisdom 4s ease-in-out infinite;
+        }
+
+        @keyframes owl-wisdom {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            25% {
+                transform: rotate(10deg);
+            }
+            50% {
+                transform: rotate(-5deg);
+            }
+            75% {
+                transform: rotate(5deg);
+            }
+        }
+
+        #chapter-5 h2 {
+            color: #a1887f;
+        }
+
+        /* Глава VI - Ритуал */
+        #chapter-6 {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(211, 47, 47, 0.05));
+            border-left: 5px solid #f44336;
+            position: relative;
+        }
+
+        #chapter-6::before {
+            content: '🔥';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.5;
+            animation: flame-dance 2s ease-in-out infinite;
+        }
+
+        @keyframes flame-dance {
+            0%, 100% {
+                transform: scale(1) rotate(-2deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg);
+            }
+        }
+
+        #chapter-6 h2 {
+            color: #ef5350;
+        }
+
+        /* Глава VII - Компас */
+        #chapter-7 {
+            background: linear-gradient(135deg, rgba(103, 58, 183, 0.1), rgba(81, 45, 168, 0.05));
+            border-left: 5px solid #673ab7;
+            position: relative;
+        }
+
+        #chapter-7::before {
+            content: '🧭';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: compass-spin 6s linear infinite;
+        }
+
+        @keyframes compass-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #chapter-7 h2 {
+            color: #9575cd;
+        }
+
+        /* Глава VIII - Свидетельство */
+        #chapter-8 {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(25, 118, 210, 0.05));
+            border-left: 5px solid #2196f3;
+            position: relative;
+        }
+
+        #chapter-8::before {
+            content: '📝';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: writing 3s ease-in-out infinite;
+        }
+
+        @keyframes writing {
+            0%, 100% {
+                transform: rotate(-5deg);
+            }
+            50% {
+                transform: rotate(5deg) translateY(-3px);
+            }
+        }
+
+        #chapter-8 h2 {
+            color: #64b5f6;
+        }
+
+        /* Глава IX - Письмо */
+        #chapter-9 {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 160, 0, 0.05));
+            border-left: 5px solid #ffc107;
+            position: relative;
+        }
+
+        #chapter-9::before {
+            content: '✉️';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: letter-float 4s ease-in-out infinite;
+        }
+
+        @keyframes letter-float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        #chapter-9 h2 {
+            color: #ffcc02;
+        }
+
+        /* Глава X - Возвращение */
+        #chapter-10 {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(56, 142, 60, 0.05));
+            border-left: 5px solid #4caf50;
+            position: relative;
+        }
+
+        #chapter-10::before {
+            content: '🌅';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.4;
+            animation: sunrise 5s ease-in-out infinite;
+        }
+
+        @keyframes sunrise {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Эпилог */
         #epilogue {
-            background: linear-gradient(135deg, rgba(20, 20, 40, 0.8), rgba(20, 40, 20, 0.8));
-            border: 1px solid rgba(255, 217, 61, 0.3);
-            box-shadow: 0 0 50px rgba(255, 217, 61, 0.2);
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(104, 159, 56, 0.1));
+            border: 3px solid rgba(139, 195, 74, 0.4);
+            border-radius: 25px;
+            position: relative;
         }
 
         #epilogue::before {
-            background: radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.1), transparent 80%);
-            opacity: 0.3;
-        }
-
-        /* Дополнительные интерактивные элементы */
-        .mirror-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
-            transition: opacity 1s ease;
-        }
-
-        .shadow-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .shadow-particle {
+            content: '🌳';
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            opacity: 0;
-            animation: float 20s infinite ease-in-out;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            opacity: 0.5;
+            animation: tree-growth 6s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
+        @keyframes tree-growth {
+            0%, 100% {
+                transform: scale(1);
             }
-            20% {
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        #epilogue h2 {
+            color: #8bc34a;
+            font-size: 2.5em;
+        }
+
+        /* Специальные элементы */
+        .quote {
+            font-style: italic;
+            font-size: 1.3em;
+            color: #8bc34a;
+            margin: 25px 0;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            background: rgba(139, 195, 74, 0.08);
+            border-radius: 0 15px 15px 0;
+            position: relative;
+        }
+
+        .quote::before {
+            content: '“';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-size: 3em;
+            color: rgba(139, 195, 74, 0.3);
+        }
+
+        .technique-box {
+            background: rgba(139, 195, 74, 0.1);
+            border: 2px solid rgba(139, 195, 74, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .technique-box h3 {
+            color: #8bc34a;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .technique-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .technique-box li {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+
+        .technique-box li::before {
+            content: '✓';
+            color: #8bc34a;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .technique-box::before {
+            content: '✨';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
                 opacity: 1;
-                transform: translateY(80vh) scale(1);
+                transform: scale(1.2);
             }
-            80% {
-                opacity: 1;
-                transform: translateY(20vh) scale(1);
+        }
+
+        .dialogue {
+            background: rgba(63, 81, 181, 0.1);
+            border-left: 3px solid #3f51b5;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+        }
+
+        .letter-style {
+            background: rgba(255, 193, 7, 0.08);
+            border: 2px dashed rgba(255, 193, 7, 0.3);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .letter-style::before {
+            content: '📜';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            opacity: 0.4;
+        }
+
+        /* Интерактивные элементы */
+        .interactive-mirror {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #8bc34a;
+            border-radius: 50%;
+            margin: 20px auto;
+            background: radial-gradient(circle, rgba(139, 195, 74, 0.2), transparent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .interactive-mirror:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(139, 195, 74, 0.5);
+        }
+
+        .progress-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 4px;
+            height: 300px;
+            background: rgba(139, 195, 74, 0.2);
+            border-radius: 2px;
+            z-index: 999;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: linear-gradient(to bottom, #8bc34a, #4caf50);
+            border-radius: 2px;
+            transition: height 0.3s ease;
+            height: 0%;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .nav-container {
+                gap: 8px;
+                padding: 0 15px;
             }
-            100% {
-                transform: translateY(-10vh) scale(0);
-                opacity: 0;
+
+            .nav-item {
+                font-size: 11px;
+                padding: 6px 12px;
             }
+
+            .container {
+                margin-top: 80px;
+                padding: 20px 15px;
+            }
+
+            .chapter {
+                padding: 25px 20px;
+                margin-bottom: 50px;
+            }
+
+            .chapter h2 {
+                font-size: 1.8em;
+            }
+
+            #chapter-0 h1 {
+                font-size: 2.5em;
+            }
+
+            .progress-indicator {
+                display: none;
+            }
+        }
+
+        /* Специальные эффекты при скролле */
+        .chapter-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: rgba(139, 195, 74, 0.2);
+            color: #8bc34a;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .reading-time {
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: rgba(139, 195, 74, 0.2);
+            color: #8bc34a;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
         }
     </style>
 </head>
 <body>
+<!-- Анимированный фон -->
+<div class="animated-bg">
+    <div class="stars"></div>
+    <div class="forest-silhouette"></div>
+    <div class="floating-leaves"></div>
+</div>
 
-    <div class="shadow-particles"></div>
-    <div class="mirror-background"></div>
+<!-- Индикатор прогресса -->
+<div class="progress-indicator">
+    <div class="progress-bar"></div>
+</div>
 
-    <nav class="navigation">
-        <div class="nav-container">
-            <a href="#ch1" class="nav-item">Прибытие</a>
-            <a href="#ch2" class="nav-item">Лисёнок</a>
-            <a href="#ch3" class="nav-item">Отражения</a>
-            <a href="#ch4" class="nav-item">Голоса в круге</a>
-            <a href="#ch5" class="nav-item">Свидетель</a>
-            <a href="#ch6" class="nav-item">Возвращение тени</a>
-            <a href="#ch7" class="nav-item">Внутренний компас</a>
-            <a href="#ch8" class="nav-item">Ежедневное свидетельство</a>
-            <a href="#ch9" class="nav-item">Письмо</a>
-            <a href="#ch10" class="nav-item">Возвращение</a>
-            <a href="#epilogue" class="nav-item">Эпилог</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <section id="ch1" class="chapter">
-            <h2>Глава I. Прибытие</h2>
-            <p>Электричка останавливалась в Ольховке только по требованию. Доктор Мирра Светлова вышла на пустую платформу с единственным чемоданом и папкой документов, которая казалась тяжелее багажа. Август 2024. Шесть месяцев после того, как её имя исчезло из всех научных публикаций института. Детский психологический центр «Рябинушка» стоял на краю села, окружённый берёзами и запахом скошенной травы. Директор Елена Петровна встретила её у входа — женщина лет пятидесяти с внимательными глазами и крепким рукопожатием. — Мы рады, что вы согласились. Дети особенные, работа непростая. Но думаю, для вас это именно то, что нужно. Мирра кивнула, не объясняя, что выбора не было. После того как весь её отдел в институте поверил словам коллеги о том, что она присваивает чужие исследования и манипулирует данными, остался только этот заброшенный центр для детей с травмами.</p>
-        </section>
-
-        <section id="ch2" class="chapter">
-            <h2>Глава II. Лисёнок</h2>
-            <p>Утром следующего дня ей представили первого подопечного. Восьмилетний Ваня сидел в углу игровой комнаты, сжав в руках игрушечную лису. Рыжие волосы, веснушки, глаза цвета лесного мха. — Он не говорит с января, — тихо сказала воспитательница Анна. — После того как дедушка... После похорон. Родители не справляются, привезли сюда на лето. Мирра опустилась на корточки рядом с мальчиком. Ваня поднял глаза — в них было что-то дикое, настороженное. — Красивая лиса, — сказала она просто. — Как её зовут? Мальчик молчал, но прижал игрушку к груди крепче. Следующие дни Мирра просто сидела рядом с ним, не принуждая к контакту. Читала вслух сказки, рисовала, играла в конструктор. Иногда чувствовала на себе его взгляд — изучающий, недоверчивый. На четвёртый день Ваня вдруг сказал: — Рыжик. — Что? — Лиса. Рыжик.</p>
-        </section>
-
-        <section id="ch3" class="chapter">
-            <h2>Глава III. Отражения</h2>
-            <p>Прошёл месяц. Ваня постепенно оттаивал — играл с другими детьми, смеялся, рисовал яркие картинки. Но Мирра чувствовала нарастающее беспокойство. Что-то в его поведении напоминало ей саму себя в детстве — ту маленькую девочку, которая всегда была «хорошей», никого не расстраивала, всё понимала. Слишком понимала. Однажды вечером, задержавшись в центре, она услышала из игровой комнаты тихий разговор. Ваня сидел с лисёнком Рыжиком и... говорил сам с собой разными голосами. — Ты плохой мальчик, — грубо бросал он игрушке. — Из-за тебя дедушка умер. — Я не хотел, — отвечал своим обычным голосом. — Хотел! Ты же радовался, что не надо к нему ездить каждые выходные. Ты же думал: «Хорошо бы он исчез». И он исчез! Мирра замерла. Мальчик проигрывал внутренний диалог со своей виной, со своей тенью. Тем голосом, каким взрослые говорили с ним, обвиняя во всех семейных бедах. Она тихо вошла в комнату. — Ваня, можно с вами поговорить? С тобой и с Рыжиком?</p>
-        </section>
-
-        <section id="ch4" class="chapter">
-            <h2>Глава IV. Техника «Голосов в круге»</h2>
-            <p>— Знаешь, что я заметила? — Мирра села напротив мальчика, который сжал лиса в руках. — У Рыжика, кажется, есть два голоса. Один добрый, а другой... злой. Ваня молчал, но глаза его расширились. — Такое бывает у всех. У меня тоже есть два голоса. Хочешь, я покажу? Она взяла две подушки, положила их напротив друг друга. — Вот тут сидит добрая Мирра, — она указала на одну подушку. — А тут злая Мирра. Добрая говорит: «Ты хороший психолог, ты помогаешь детям». А злая отвечает: «Ты обманщица! Из-за тебя люди пострадали!» Ваня смотрел во все глаза. — И знаешь что? Я долго думала, что злая Мирра — это правда обо мне. Но потом поняла: злая Мирра — это не я. Это голос тех людей, которые когда-то говорили со мной плохо. Он просто поселился у меня в голове. Мирра пересела к «злой» подушке и изменила голос, сделав его резче: — А теперь ты сидишь с каким-то оборванцем и рассказываешь сказки! Потом вернулась к «доброй»: — Я сижу с мальчиком, которому больно. И я его понимаю. Ваня медленно поставил лиса между подушками. — А Рыжик где сидит? — А Рыжик, наверное, посередине. Он слушает оба голоса и решает, какому верить.</p>
-        </section>
-
-        <section id="ch5" class="chapter">
-            <h2>Глава V. Метод «Свидетель»</h2>
-            <p>Через неделю Мирра предложила Ване новую игру. — Помнишь, мы говорили про два голоса? А есть ещё третий. Он не добрый и не злой. Он просто... смотрит. Как мудрая сова. Она достала мягкую игрушку — сову с большими жёлтыми глазами. — Сова Соня всё видит, но не судит. Она просто замечает. Хочешь попробовать быть совой? Ваня взял игрушку в руки. — Когда злой голос говорит Рыжику гадости, сова может сказать: «Я замечаю, что сейчас звучит голос, который хочет сделать больно. Интересно, откуда он взялся?» Мальчик задумался. — Этот голос... он как у папы, когда он пьёт. — Ага. Значит, это не твой голос. Это папин голос, который попал к тебе в голову. А что думает сова? — Сова думает... — Ваня поднял игрушку к глазам, — сова думает, что дедушка умер не из-за Рыжика. Дедушки иногда умирают, потому что болеют.</p>
-        </section>
-
-        <section id="ch6" class="chapter">
-            <h2>Глава VI. Ритуал «Возвращения тени»</h2>
-            <p>В начале сентября, когда лета почти не осталось, Мирра решилась на самый сложный эксперимент. Не только с Ваней, но и с собой. — У нас есть последнее задание, — сказала она мальчику. — Мы должны вернуть злые голоса тем, кому они принадлежат. Они вышли в лес за центром. Мирра принесла с собой блокнот и ручку. — Сейчас мы напишем письмо. Не чтобы отправить, а чтобы сказать правду. Ваня неуверенно взял ручку. — Пиши то, что злой голос всегда говорит Рыжику. Мальчик старательно выводил: «Ты плохой. Ты виноват. Из-за тебя дедушка умер.» — А теперь напиши, кому принадлежат эти слова. «Папе. Когда он злой.» — Теперь напиши ответ от себя. Ваня задумался, потом написал: «Я не виноват. Я скучаю по дедушке. Но это не моя вина.» Мирра взяла свой лист. Написала быстро, не задумываясь: «Вы говорили, что я присваиваю чужие идеи. Что я манипулирую. Вы поверили одному человеку против всех фактов. Возвращаю вам ваш страх и вашу тень. Это не мои.» Они сложили листы в маленький костёр из сухих веток. — Огонь всё превращает, — сказала Мирра, поджигая спичку. — Злость в дым, страх в пепел, а боль в мудрость. Бумага сгорала, унося с собой чужие голоса.</p>
-        </section>
-
-        <section id="ch7" class="chapter">
-            <h2>Глава VII. Метод «Внутреннего компаса»</h2>
-            <p>В последний день перед отъездом Вани домой Мирра подарила ему маленький компас. — Это не обычный компас, — сказала она. — Он показывает не на север. Он показывает на правду. Ваня покрутил стрелку. — Как пользоваться? — Когда услышишь голос, который говорит тебе плохие вещи, достань компас. Спроси: «Это мой голос или чужой?» Если стрелка дрожит — значит, чужой. Если стоит ровно — твой. — А если мой? — Тогда послушай, что он хочет сказать. Может, это голос твоей совести, а может, твоих желаний. Но это точно не голос, который хочет сделать больно. Мальчик спрятал компас в карман. — А у тебя есть такой? Мирра показала свой — старый латунный компас, потемневший от времени. — Я пользуюсь им всю жизнь. Только недавно научилась различать стрелки.</p>
-        </section>
-
-        <section id="ch8" class="chapter">
-            <h2>Глава VIII. Техника «Ежедневного свидетельства»</h2>
-            <p>Через месяц после отъезда Вани Мирра разработала для себя и других детей центра практику, которую назвала «Пять минут правды». Каждый вечер, перед сном, она записывала в специальную тетрадь ответы на четыре вопроса: 1. Какой голос сегодня говорил громче всего? 2. Чей это был голос? (мой или чужой) 3. Что мой внутренний свидетель заметил в этой ситуации? 4. Что бы я сказал этому голосу, если бы не боялся? Первые записи были болезненными: *«Голос говорил: "Ты никому не нужна, провалилась как учёный". Это голос моей матери из детства. Свидетель замечает: я помогла трём детям сегодня почувствовать себя лучше. Голосу я бы сказала: "Ты ошибаешься. Моя ценность не в признании других"».* Но постепенно записи становились спокойнее, яснее.</p>
-        </section>
-
-        <section id="ch9" class="chapter">
-            <h2>Глава IX. Письмо через полгода</h2>
-            <p>*Январь 2025. Письмо от Вани:* *«Дорогая Мирра! Мама разрешила мне написать. У меня всё хорошо. Я хожу в школу и у меня есть друг Серёжа. Рыжик живёт у меня на полке, но я с ним больше не ругаюсь. Компас работает! Вчера папа кричал на меня, но я достал компас, и стрелка задрожала. Значит, это его голос, не мой. А мой голос сказал: "Папа устал, но это не про меня". Ещё я хожу к психологу тёте Наташе. Она тоже знает про голоса. А как у вас дела? Вы ещё помогаете детям? Мама говорит, что вы очень хороший доктор. Ваш Ваня. PS: Совы и правда мудрые!»*</p>
-        </section>
-
-        <section id="ch10" class="chapter">
-            <h2>Глава X. Возвращение</h2>
-            <p>Весной 2025 года Мирре пришло письмо от института. Новое руководство приглашало её вернуться — коллега, который строил против неё обвинения, оказался замешан в реальных нарушениях, а её исследования признали прорывными. Мирра держала письмо и чувствовала... удивительную тишину. Не радость, не злорадство. Тишину. Вечером она написала в своей тетради: *«Какой голос говорит громче всего? Голос, который хочет вернуться и доказать всем, что они ошибались. Чей это голос? Голос старой Мирры, которая жила для одобрения других. Что замечает свидетель? Я счастлива здесь. Мои дети выздоравливают. Я нашла свой путь. Что я скажу голосу? Спасибо за желание защитить меня. Но мне больше не нужно ничего доказывать».*</p>
-        </section>
-
-        <section id="epilogue" class="chapter">
-            <h2>Эпилог. Метод «Благодарной тени»</h2>
-            <p>Через год центр «Рябинушка» стал методическим центром по работе с детскими травмами. Мирра разработала комплексную программу «Возвращение к себе», которая включала: <b>1. Технику «Голосов в круге»</b> — материализация внутренних диалогов через игрушки и подушки <b>2. Метод «Внутреннего свидетеля»</b> — развитие нейтрального наблюдающего сознания <b>3. Ритуал «Возвращения тени»</b> — символическое освобождение от чужих проекций <b>4. Практику «Внутреннего компаса»</b> — различение своих и чужих голосов <b>5. Ежедневное «Свидетельство»</b> — письменная рефлексия для закрепления осознанности Но самым важным оказался шестой элемент — <b>«Благодарность тени»</b>. — Тень — не враг, — объясняла Мирра новым сотрудникам. — Это охранник, который плохо выучил инструкцию. Он защищает нас так, как умеет. Наша задача — не уничтожить его, а переобучить. В её кабинете появилось зеркало с надписью: *«Спасибо за попытку защитить меня. Теперь я справлюсь сама»*. Каждый день, глядя в отражение, Мирра благодарила все свои внутренние голоса — и светлые, и тёмные. За опыт, за уроки, за то, что привели её туда, где она нужна. А на подоконнике по-прежнему сидели игрушки всех детей, которые прошли через её кабинет: лисёнок Рыжик, сова Соня и множество других — свидетели тысяч маленьких исцелений. Тень больше не была врагом. Она стала союзником — тем, кто знает дорогу в темноте и может провести к свету.</p>
-        </section>
+<!-- Навигация -->
+<nav class="navigation">
+    <div class="nav-container">
+        <a href="#chapter-0" class="nav-item">Начало</a>
+        <a href="#chapter-1" class="nav-item">I. Прибытие</a>
+        <a href="#chapter-2" class="nav-item">II. Лисёнок</a>
+        <a href="#chapter-3" class="nav-item">III. Отражения</a>
+        <a href="#chapter-4" class="nav-item">IV. Голоса</a>
+        <a href="#chapter-5" class="nav-item">V. Свидетель</a>
+        <a href="#chapter-6" class="nav-item">VI. Ритуал</a>
+        <a href="#chapter-7" class="nav-item">VII. Компас</a>
+        <a href="#chapter-8" class="nav-item">VIII. Свидетельство</a>
+        <a href="#chapter-9" class="nav-item">IX. Письмо</a>
+        <a href="#chapter-10" class="nav-item">X. Возвращение</a>
+        <a href="#epilogue" class="nav-item">Эпилог</a>
     </div>
+</nav>
 
-    <script>
-        // JS для плавного скролла и анимации
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                window.scrollTo({
-                    top: targetElement.offsetTop - 100, // Отступ для навигации
-                    behavior: 'smooth'
-                });
-            });
+<div class="container">
+    <!-- Заголовок -->
+    <section id="chapter-0" class="chapter">
+        <h1>Зеркало в тени леса</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #8bc34a; margin-top: 20px;">
+            <em>История исцеления через работу с внутренними голосами</em>
+        </p>
+        <div class="interactive-mirror" onclick="startReading()">
+            🪞
+        </div>
+    </section>
+
+    <!-- Глава I -->
+    <section id="chapter-1" class="chapter">
+        <div class="chapter-number">Глава I</div>
+        <div class="reading-time">3 мин</div>
+        <h2>Прибытие</h2>
+        <p>Электричка останавливалась в Ольховке только по требованию. Доктор Мирра Светлова вышла на пустую платформу с единственным чемоданом и папкой документов, которая казалась тяжелее багажа. Август 2024. Шесть месяцев после того, как её имя исчезло из всех научных публикаций института.</p>
+        <p>Детский психологический центр «Рябинушка» стоял на краю села, окружённый берёзами и запахом скошенной травы. Директор Елена Петровна встретила её у входа — женщина лет пятидесяти с внимательными глазами и крепким рукопожатием.</p>
+        <div class="dialogue">
+            — Мы рады, что вы согласились. Дети особенные, работа непростая. Но думаю, для вас это именно то, что нужно.
+        </div>
+        <p>Мирра кивнула, не объясняя, что выбора не было. После того как весь её отдел в институте поверил словам коллеги о том, что она присваивает чужие исследования и манипулирует данными, остался только этот заброшенный центр для детей с травмами.</p>
+    </section>
+
+    <!-- Глава II -->
+    <section id="chapter-2" class="chapter">
+        <div class="chapter-number">Глава II</div>
+        <div class="reading-time">4 мин</div>
+        <h2>Лисёнок</h2>
+        <p>Утром следующего дня ей представили первого подопечного. Восьмилетний Ваня сидел в углу игровой комнаты, сжав в руках игрушечную лису. Рыжие волосы, веснушки, глаза цвета лесного мха.</p>
+        <div class="dialogue">
+            — Он не говорит с января, — тихо сказала воспитательница Анна. — После того как дедушка... После похорон. Родители не справляются, привезли сюда на лето.
+        </div>
+        <p>Мирра опустилась на корточки рядом с мальчиком. Ваня поднял глаза — в них было что-то дикое, настороженное.</p>
+        <div class="dialogue">
+            — Красивая лиса, — сказала она просто. — Как её зовут?
+        </div>
+        <p>Мальчик молчал, но прижал игрушку к груди крепче.</p>
+        <p>Следующие дни Мирра просто сидела рядом с ним, не принуждая к контакту. Читала вслух сказки, рисовала, играла в конструктор. Иногда чувствовала на себе его взгляд — изучающий, недоверчивый.</p>
+        <p>На четвёртый день Ваня вдруг сказал:</p>
+        <div class="dialogue">
+            — Рыжик.<br>
+            — Что?<br>
+            — Лиса. Рыжик.
+        </div>
+    </section>
+
+    <!-- Глава III -->
+    <section id="chapter-3" class="chapter">
+        <div class="chapter-number">Глава III</div>
+        <div class="reading-time">5 мин</div>
+        <h2>Отражения</h2>
+        <p>Прошёл месяц. Ваня постепенно оттаивал — играл с другими детьми, смеялся, рисовал яркие картинки. Но Мирра чувствовала нарастающее беспокойство. Что-то в его поведении напоминало ей саму себя в детстве — ту маленькую девочку, которая всегда была «хорошей», никого не расстраивала, всё понимала.</p>
+        <p><strong>Слишком понимала.</strong></p>
+        <p>Однажды вечером, задержавшись в центре, она услышала из игровой комнаты тихий разговор. Ваня сидел с лисёнком Рыжиком и... говорил сам с собой разными голосами.</p>
+        <div class="dialogue">
+            — Ты плохой мальчик, — грубо бросал он игрушке. — Из-за тебя дедушка умер.<br>
+            — Я не хотел, — отвечал своим обычным голосом.<br>
+            — Хотел! Ты же радовался, что не надо к нему ездить каждые выходные. Ты же думал: «Хорошо бы он исчез». И он исчез!
+        </div>
+        <p>Мирра замерла. Мальчик проигрывал внутренний диалог со своей виной, со своей тенью. Тем голосом, каким взрослые говорили с ним, обвиняя во всех семейных бедах.</p>
+        <p>Она тихо вошла в комнату.</p>
+        <div class="dialogue">
+            — Ваня, можно с вами поговорить? С тобой и с его друзьями.
+        </div>
+        <div class="interactive-mirror" onclick="showMirrorMessage()">
+            <span style="font-size: 1.5em; color: #fff;">?</span>
+        </div>
+        <p style="text-align: center; color: #b0b0b0; font-style: italic;">Нажмите на зеркало, чтобы увидеть отражение ее мыслей.</p>
+    </section>
+
+    <!-- Глава IV - Голоса в круге -->
+    <section id="chapter-4" class="chapter">
+        <div class="chapter-number">Глава IV</div>
+        <div class="reading-time">4 мин</div>
+        <h2>Голоса в круге</h2>
+        <p>Мирра достала из шкафа несколько мягких игрушек. Большой добрый медведь, злая ворона, хитрая змея. Она рассадила их по кругу, оставив место для Вани и Рыжика.</p>
+        <div class="dialogue">
+            — Представь, что это голоса в твоей голове. У каждого своя правда. Попробуй дать им высказаться.
+        </div>
+        <p>Сначала Ваня не понимал. Но Мирра показала пример: взяла медведя, заговорила грубым мужским голосом, потом тонким, как у девочки, и, наконец, своим. Они вместе с Ваней разыграли сложный диалог, используя разных персонажей. Мирра поняла: так можно вынести внутренний конфликт наружу, сделать его видимым.</p>
+        <div class="technique-box">
+            <h3>Техника «Голосов в круге»</h3>
+            <p><strong>Суть:</strong> материализация внутренних диалогов через игрушки. Каждой эмоции или роли (виновник, жертва, критик, защитник) даётся свой «голос»-игрушка. Человек проговаривает свои чувства через них, что позволяет дистанцироваться от проблемы и взглянуть на неё со стороны.
+            </p>
+        </div>
+        <p>Уже через неделю Ваня сам приносил игрушки, когда чувствовал, что его внутренний критик снова начинает ругаться. Он выставлял их на бой, как солдатиков, и сам становился полководцем, решающим их судьбы.</p>
+    </section>
+
+    <!-- Глава V - Свидетель -->
+    <section id="chapter-5" class="chapter">
+        <div class="chapter-number">Глава V</div>
+        <div class="reading-time">3 мин</div>
+        <h2>Свидетель</h2>
+        <p>Следующим этапом Мирра ввела практику «внутреннего свидетеля». Она дала Ване маленький блокнот и карандаш.</p>
+        <div class="dialogue">
+            — Твоя задача — просто наблюдать. Если ты чувствуешь, что «злая ворона» снова кричит, или «лисёнок» боится, запиши это. Не пытайся их успокоить. Просто будь свидетелем. Как будто смотришь фильм про себя.
+        </div>
+        <p>Эта техника была сложна для мальчика, но постепенно он научился. Он перестал быть жертвой своих эмоций, а стал их наблюдателем. А Мирра, глядя на него, поняла, что в своей жизни так и не освоила эту простую практику. Она всегда была участником, всегда пыталась изменить, исправить, доказать.</p>
+        <div class="quote">
+            «Я не могу изменить то, что произошло. Но я могу изменить то, как я на это смотрю. Это и есть настоящая свобода».
+        </div>
+    </section>
+
+    <!-- Глава VI - Ритуал -->
+    <section id="chapter-6" class="chapter">
+        <div class="chapter-number">Глава VI</div>
+        <div class="reading-time">4 мин</div>
+        <h2>Ритуал</h2>
+        <p>Самым мощным опытом стал «ритуал возвращения тени». Мирра и Ваня вышли вечером к озеру. Мальчик вынул из кармана маленький листик, на котором было написано: «Я виноват в смерти дедушки». Он сложил его вдвое, и Мирра помогла ему бросить его в костёр.</p>
+        <div class="dialogue">
+            — Это не твоя вина, Ваня. Это чужая тень. Тень, которую тебе отдали. Теперь она возвращается туда, откуда пришла.
+        </div>
+        <p>Они молча смотрели, как огонь поглощает бумагу. Ваня заплакал — тихо, беззвучно, но так, как никогда раньше. Это были слёзы не горя, а освобождения. Мирра чувствовала, как её собственная «тень» — тень обвинения и несправедливости — тоже сжигается в этом огне.</p>
+        <p>Она поняла, что ритуал — это не волшебство, а символический акт, который помогает разуму принять то, что не могут принять слова.</p>
+    </section>
+
+    <!-- Глава VII - Компас -->
+    <section id="chapter-7" class="chapter">
+        <div class="chapter-number">Глава VII</div>
+        <div class="reading-time">2 мин</div>
+        <h2>Компас</h2>
+        <p>После этого Мирра дала Ване компас. Самый простой, но настоящий.</p>
+        <div class="dialogue">
+            — Твои внутренние голоса — это стрелки. Они указывают в разные стороны. А ты — это центр. Твой компас — это твоё сердце. Только ты знаешь, куда нужно идти на самом деле.
+        </div>
+        <p>Ваня стал носить его всегда с собой. Он перестал бояться чужих мнений, потому что знал: у него есть свой собственный компас. У Мирры тоже появился компас — она перестала искать одобрения, перестала сравнивать себя с другими. Она просто двигалась в сторону, которую указывало её сердце.</p>
+    </section>
+
+    <!-- Глава VIII - Свидетельство -->
+    <section id="chapter-8" class="chapter">
+        <div class="chapter-number">Глава VIII</div>
+        <div class="reading-time">3 мин</div>
+        <h2>Свидетельство</h2>
+        <p>Каждый вечер они с Ваней писали «свидетельства». Просто описывали, что произошло за день, без оценки и осуждения. Что «злая ворона» кричала, когда Ваня проиграл в игру. Что «добрая лиса» радовалась, когда он помогал другу. И как Мирра чувствовала себя, когда ей писали из института, предлагая вернуться.</p>
+        <p>Через месяц таких записей они увидели полную картину — как поменялись их «внутренние голоса», как они стали спокойнее и добрее. Как тени медленно отступали.</p>
+        <p>И в конце каждой записи Мирра писала: «Спасибо за попытку защитить меня. Но мне больше не нужно ничего доказывать».</p>
+    </section>
+
+    <!-- Глава IX - Письмо -->
+    <section id="chapter-9" class="chapter">
+        <div class="chapter-number">Глава IX</div>
+        <div class="reading-time">5 мин</div>
+        <h2>Письмо</h2>
+        <p>Ваня уехал в конце лета, обняв Мирру на прощание. Через неделю пришло письмо от него. Это было первое, что он написал сам.</p>
+        <div class="letter-style">
+            <p><em>Дорогая Мирра,</em></p>
+            <p><em>Рыжик передает привет. Злая ворона больше не кричит, она спит. А компас я ношу всегда с собой. Спасибо вам. Я знаю, что моя тень теперь живет отдельно, и она мне не мешает.</em></p>
+            <p><em>Ваня.</em></p>
+        </div>
+        <p>На обратной стороне конверта был нарисован маленький лисёнок, а рядом — Мирра, которая улыбалась.</p>
+    </section>
+
+    <!-- Глава X - Возвращение -->
+    <section id="chapter-10" class="chapter">
+        <div class="chapter-number">Глава X</div>
+        <div class="reading-time">3 мин</div>
+        <h2>Возвращение</h2>
+        <p>Мирра не вернулась в институт. Она осталась в «Рябинушке». Её имя уже не было известно в научных кругах, но она стала настоящим целителем. Дети приезжали к ней с самыми тяжёлыми историями, и каждый находил свой «компас» и свою «тень».</p>
+        <div class="quote">
+            «Моя истинная работа — не доказать свою правоту. Моя истинная работа — помочь другим найти свою. А моя тень... Спасибо за попытку защитить меня. Но мне больше не нужно ничего доказывать».
+        </div>
+    </section>
+
+    <!-- Эпилог -->
+    <section id="epilogue" class="chapter">
+        <h2>Эпилог. Метод «Благодарной тени»</h2>
+        <p>Через год центр «Рябинушка» стал методическим центром по работе с детскими травмами. Мирра разработала комплексную программу «Возвращение к себе», которая включала:</p>
+        <div class="technique-box">
+            <ul>
+                <li>Технику «Голосов в круге» — материализация внутренних диалогов через игрушки и подушки</li>
+                <li>Метод «Внутреннего свидетеля» — развитие нейтрального наблюдающего сознания</li>
+                <li>Ритуал «Возвращения тени» — символическое освобождение от чужих проекций</li>
+                <li>Практику «Внутреннего компаса» — различение своих и чужих голосов</li>
+                <li>Ежедневное «Свидетельство» — письменная рефлексия для закрепления осознанности</li>
+            </ul>
+        </div>
+        <p>Но самым важным оказался шестой элемент — <strong>«Благодарность тени»</strong>.</p>
+        <div class="dialogue">
+            — Тень — не враг, — объясняла Мирра новым сотрудникам. — Это охранник, который плохо выучил инструкцию. Он защищает нас так, как умеет. Наша задача — не уничтожить его, а переобучить.
+        </div>
+        <p>В её кабинете появилось зеркало с надписью: *«Спасибо за попытку защитить меня. Теперь я справлюсь сама»*.</p>
+        <p>Каждый день, глядя в отражение, Мирра благодарила все свои внутренние голоса — и светлые, и тёмные. За опыт, за уроки, за то, что привели её туда, где она нужна.</p>
+        <p>А на подоконнике по-прежнему сидели игрушки всех детей, которые прошли через «Рябинушку», как напоминание о том, что свет всегда побеждает тьму, если научиться видеть её красоту.</p>
+    </section>
+
+</div>
+
+<script>
+    // JavaScript для интерактивности
+
+    // Анимированные элементы
+    const animatedBg = document.querySelector('.animated-bg');
+    const stars = animatedBg.querySelector('.stars');
+    const leaves = animatedBg.querySelector('.floating-leaves');
+    const sections = document.querySelectorAll('.chapter');
+    const navItems = document.querySelectorAll('.nav-item');
+    const navigation = document.querySelector('.navigation');
+    let lastScrollY = window.scrollY;
+
+    // Создание звезд
+    for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        stars.appendChild(star);
+    }
+
+    // Создание листьев
+    for (let i = 0; i < 30; i++) {
+        const leaf = document.createElement('div');
+        leaf.classList.add('leaf');
+        leaf.style.left = `${Math.random() * 100}vw`;
+        leaf.style.animationDuration = `${10 + Math.random() * 10}s`;
+        leaf.style.animationDelay = `${Math.random() * 10}s`;
+        leaves.appendChild(leaf);
+    }
+
+    // Функция для проверки видимости секций
+    function checkVisibility() {
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                section.classList.add('visible');
+            } else {
+                section.classList.remove('visible');
+            }
+        });
+    }
+
+    // Обновление прогресс-бара и навигации
+    function updateProgressAndNav() {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (window.scrollY / docHeight) * 100;
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            progressBar.style.height = `${scrollPercent}%`;
+        }
+
+        let currentActive = '';
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 100 && rect.bottom >= 100) {
+                currentActive = section.id;
+            }
         });
 
-        const chapters = document.querySelectorAll('.chapter');
-        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === `#${currentActive}`) {
+                item.classList.add('active');
+            }
+        });
 
-        function activateNav() {
-            let currentChapter = '';
-            chapters.forEach(chapter => {
-                const chapterTop = chapter.getBoundingClientRect().top;
-                if (chapterTop < window.innerHeight / 2) {
-                    currentChapter = chapter.id;
-                }
-            });
-
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href').substring(1) === currentChapter) {
-                    item.classList.add('active');
-                }
-            });
+        // Скрытие/показ навигации при скролле
+        if (window.scrollY > lastScrollY && window.scrollY > 200) {
+            navigation.classList.add('hidden');
+        } else {
+            navigation.classList.remove('hidden');
         }
+        lastScrollY = window.scrollY;
+    }
 
-        function handleScroll() {
-            chapters.forEach(chapter => {
-                const chapterTop = chapter.getBoundingClientRect().top;
-                if (chapterTop < window.innerHeight - 150) {
-                    chapter.classList.add('visible');
-                } else {
-                    chapter.classList.remove('visible');
-                }
-            });
-            activateNav();
+    // Интерактивное зеркало
+    function showMirrorMessage() {
+        const mirror = document.querySelector('#chapter-3 .interactive-mirror');
+        mirror.innerHTML = `
+            <div style="font-size: 0.5em; text-align: center; padding: 10px;">
+                "Ты не можешь спасти всех. Ты даже себя не спасла."
+            </div>
+        `;
+        mirror.style.background = 'radial-gradient(circle, rgba(255, 193, 7, 0.4), transparent)';
+        setTimeout(() => {
+            mirror.innerHTML = '🪞';
+            mirror.style.background = 'radial-gradient(circle, rgba(139, 195, 74, 0.2), transparent)';
+        }, 3000);
+    }
+
+    // Функция для начала чтения
+    function startReading() {
+        const firstChapter = document.getElementById('chapter-1');
+        if (firstChapter) {
+            firstChapter.scrollIntoView({ behavior: 'smooth' });
         }
+    }
 
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('load', handleScroll);
-
-        // Генерация анимированных частиц
-        const shadowParticlesContainer = document.querySelector('.shadow-particles');
-        const particleCount = 50;
-
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('shadow-particle');
-            const size = Math.random() * 5 + 2;
-            const x = Math.random() * 100;
-            const y = Math.random() * 100;
-            const delay = Math.random() * 20;
-
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${x}vw`;
-            particle.style.top = `${y}vh`;
-            particle.style.animationDelay = `${delay}s`;
-            shadowParticlesContainer.appendChild(particle);
-        }
-    </script>
+    // Слушатели событий
+    window.addEventListener('scroll', () => {
+        checkVisibility();
+        updateProgressAndNav();
+    });
+    window.addEventListener('load', () => {
+        checkVisibility();
+        updateProgressAndNav();
+    });
+</script>
 
 </body>
 </html>
