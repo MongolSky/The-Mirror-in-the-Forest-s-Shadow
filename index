@@ -3,899 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Зеркала - Интерактивное чтение</title>
+    <title>Зеркало в тени леса</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Georgia', serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 20px;
         }
-
-        .mirror-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            transition: all 1s ease;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.02) 0%, transparent 70%);
-        }
-
-        .navigation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px);
-            z-index: 1000;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding: 0 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 13px;
-            padding: 8px 16px;
-            border-radius: 25px;
-            transition: all 0.4s ease;
-            border: 1px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .nav-item:hover::before {
-            left: 100%;
-        }
-
-        .nav-item:hover {
-            color: #fff;
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-
-        .nav-item.active {
-            color: #ff6b6b;
-            background: rgba(255,107,107,0.1);
-            border-color: rgba(255,107,107,0.5);
-            box-shadow: 0 0 30px rgba(255,107,107,0.2);
-        }
-
         .container {
-            max-width: 900px;
-            margin: 120px auto 0;
-            padding: 0 20px;
-            position: relative;
-        }
-
-        .chapter {
-            min-height: 100vh;
-            padding: 60px 40px;
-            margin-bottom: 40px;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease;
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .chapter.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .chapter::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            transition: all 1s ease;
-        }
-
-        /* Уникальные стили для каждой главы */
-        .chapter-title {
-            background: rgba(10,10,10,0.98);
-            border: 2px solid rgba(255,107,107,0.3);
-        }
-
-        .chapter-title::before {
-            background: linear-gradient(135deg, rgba(255,107,107,0.05) 0%, rgba(255,217,61,0.05) 100%);
-        }
-
-        .chapter-title h1 {
-            font-size: 3.5em;
-            text-align: center;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #ff6b6b);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s ease-in-out infinite;
-            margin-bottom: 30px;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .chapter-1 {
-            background: rgba(20,20,40,0.95);
-            border: 1px solid rgba(100,100,200,0.2);
-        }
-
-        .chapter-1::before {
-            background: radial-gradient(circle at 30% 20%, rgba(100,100,200,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(150,150,255,0.08) 0%, transparent 60%);
-        }
-
-        .chapter-2 {
-            background: rgba(40,20,20,0.95);
-            border: 1px solid rgba(200,100,100,0.2);
-        }
-
-        .chapter-2::before {
-            background: linear-gradient(45deg, rgba(200,100,100,0.1) 0%, rgba(255,150,150,0.05) 100%);
-        }
-
-        .chapter-3 {
-            background: rgba(30,30,20,0.95);
-            border: 1px solid rgba(200,200,100,0.2);
-        }
-
-        .chapter-3::before {
-            background: radial-gradient(ellipse at center, rgba(255,217,61,0.08) 0%, transparent 70%);
-        }
-
-        .chapter-4 {
-            background: rgba(20,40,20,0.95);
-            border: 1px solid rgba(100,200,100,0.2);
-        }
-
-        .chapter-4::before {
-            background: linear-gradient(180deg, rgba(100,200,100,0.1) 0%, rgba(150,255,150,0.05) 100%);
-        }
-
-        .chapter-5 {
-            background: rgba(40,20,40,0.95);
-            border: 1px solid rgba(200,100,200,0.2);
-        }
-
-        .chapter-5::before {
-            background: radial-gradient(circle at 50% 50%, rgba(200,100,200,0.1) 0%, transparent 60%);
-        }
-
-        .chapter-6 {
-            background: rgba(20,30,40,0.95);
-            border: 1px solid rgba(100,150,200,0.2);
-        }
-
-        .chapter-6::before {
-            background: linear-gradient(90deg, rgba(100,150,200,0.1) 0%, rgba(150,200,255,0.05) 100%);
-        }
-
-        .chapter-7 {
-            background: rgba(30,20,30,0.95);
-            border: 1px solid rgba(150,100,150,0.2);
-        }
-
-        .chapter-7::before {
-            background: radial-gradient(circle at 20% 30%, rgba(150,100,150,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 70%, rgba(200,150,200,0.08) 0%, transparent 60%);
-        }
-
-        .chapter-8 {
-            background: rgba(25,35,25,0.95);
-            border: 1px solid rgba(120,180,120,0.2);
-        }
-
-        .chapter-8::before {
-            background: linear-gradient(135deg, rgba(120,180,120,0.1) 0%, rgba(180,255,180,0.05) 100%);
-        }
-
-        .chapter-9 {
-            background: rgba(35,25,35,0.95);
-            border: 1px solid rgba(180,120,180,0.2);
-        }
-
-        .chapter-9::before {
-            background: radial-gradient(ellipse at center, rgba(180,120,180,0.1) 0%, transparent 80%);
-        }
-
-        .chapter-epilogue {
-            background: rgba(25,25,35,0.95);
-            border: 1px solid rgba(120,120,180,0.2);
-        }
-
-        .chapter-epilogue::before {
-            background: linear-gradient(45deg, rgba(120,120,180,0.1) 0%, rgba(180,180,255,0.05) 50%, rgba(255,217,61,0.05) 100%);
-        }
-
-        .chapter-techniques {
-            background: rgba(30,30,30,0.98);
-            border: 2px solid rgba(255,217,61,0.3);
-        }
-
-        .chapter-techniques::before {
-            background: linear-gradient(180deg, rgba(255,217,61,0.08) 0%, rgba(255,107,107,0.05) 100%);
-        }
-
-        .chapter h2 {
-            font-size: 2.2em;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #ff6b6b;
-            text-shadow: 0 0 20px rgba(255,107,107,0.3);
-        }
-
-        .chapter p {
-            line-height: 1.8;
-            margin-bottom: 25px;
-            font-size: 1.1em;
-            text-align: justify;
-        }
-
-        .chapter em {
-            color: #ffd93d;
-            font-style: italic;
-        }
-
-        .quote {
-            font-style: italic;
-            font-size: 1.3em;
-            color: #ffd93d;
-            margin: 30px 0;
-            padding: 25px;
-            border-left: 4px solid #ff6b6b;
-            background: rgba(255,217,61,0.05);
-            border-radius: 0 15px 15px 0;
-            position: relative;
-        }
-
-        .quote::before {
-            content: '"';
-            font-size: 4em;
-            color: rgba(255,107,107,0.3);
-            position: absolute;
-            top: -10px;
-            left: 10px;
-        }
-
-        .technique-box {
-            background: rgba(255,217,61,0.08);
-            border: 1px solid rgba(255,217,61,0.3);
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 15px;
-            position: relative;
-        }
-
-        .technique-box h3 {
-            color: #ffd93d;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .technique-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .technique-box li {
-            margin-bottom: 8px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .technique-box li::before {
-            content: '•';
-            color: #ff6b6b;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .reflection-mirror {
-            position: fixed;
-            top: 50%;
-            right: -200px;
-            width: 150px;
-            height: 200px;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            transform: translateY(-50%) rotateY(15deg);
-            transition: all 0.6s ease;
-            opacity: 0.7;
-            z-index: 500;
-        }
-
-        .reflection-mirror.active {
-            right: 20px;
-            opacity: 1;
-        }
-
-        .reading-progress {
-            position: fixed;
-            top: 70px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: rgba(255,255,255,0.1);
-            z-index: 999;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        @media (max-width: 768px) {
-            .chapter {
-                padding: 40px 20px;
-            }
-            
-            .chapter h2 {
-                font-size: 1.8em;
-            }
-            
-            .chapter-title h1 {
-                font-size: 2.5em;
-            }
-            
-            .reflection-mirror {
-                display: none;
-            }
-            
-            .nav-container {
-                gap: 8px;
-                justify-content: flex-start;
-                overflow-x: auto;
-                padding-bottom: 5px;
-            }
-            
-            .nav-item {
-                font-size: 11px;
-                padding: 6px 12px;
-                white-space: nowrap;
-            }
-        }
-
-        .floating-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            animation: float-particle 10s infinite linear;
-        }
-
-        @keyframes float-particle {
-            0% {
-                transform: translateY(100vh) translateX(0) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            90% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                transform: translateY(-10vh) translateX(50px) scale(0);
-                opacity: 0;
-            }
-        }
-
-        .mirror-reflection {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 80px;
-            background: linear-gradient(45deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.15);
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        .chapter:hover .mirror-reflection {
-            opacity: 1;
+        h2 {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 2.2em;
+            text-align: center;
+            color: #555;
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            line-height: 1.2;
         }
-
-        .emotional-indicator {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            width: 4px;
-            height: 0;
-            background: linear-gradient(180deg, #ff6b6b, #ffd93d);
-            border-radius: 2px;
-            transform: translateY(-50%);
-            transition: height 1s ease;
+        h3 {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.5em;
+            color: #555;
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
         }
-
-        .chapter.visible .emotional-indicator {
-            height: 60%;
+        p {
+            font-size: 1.1em;
+            text-indent: 1.5em;
+            margin-bottom: 1em;
+        }
+        ul, ol {
+            padding-left: 2em;
+        }
+        blockquote {
+            font-style: italic;
+            border-left: 4px solid #ccc;
+            margin: 1.5em 0;
+            padding: 0.5em 1em;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="floating-particles"></div>
-    <div class="mirror-background"></div>
-    <div class="reflection-mirror" id="reflectionMirror"></div>
-    
-    <div class="reading-progress">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <nav class="navigation">
-        <div class="nav-container">
-            <a href="#title" class="nav-item active" data-chapter="title">Заголовок</a>
-            <a href="#ch1" class="nav-item" data-chapter="1">Безупречность</a>
-            <a href="#ch2" class="nav-item" data-chapter="2">Трещина</a>
-            <a href="#ch3" class="nav-item" data-chapter="3">Зеркало</a>
-            <a href="#ch4" class="nav-item" data-chapter="4">Зеркальные вопросы</a>
-            <a href="#ch5" class="nav-item" data-chapter="5">Первые открытия</a>
-            <a href="#ch6" class="nav-item" data-chapter="6">Техника "Список теней"</a>
-            <a href="#ch7" class="nav-item" data-chapter="7">Принятие тени</a>
-            <a href="#ch8" class="nav-item" data-chapter="8">Эмоциональный детектив</a>
-            <a href="#ch9" class="nav-item" data-chapter="9">Прощение</a>
-            <a href="#epilogue" class="nav-item" data-chapter="epilogue">Интеграция</a>
-            <a href="#techniques" class="nav-item" data-chapter="techniques">Методики</a>
-        </div>
-    </nav>
-
     <div class="container">
-        <section id="title" class="chapter chapter-title">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h1>Зеркала</h1>
-            <p style="text-align: center; font-size: 1.3em; color: #ffd93d; font-style: italic; margin-top: 30px;">
-                История о том, как научиться видеть себя настоящую через отражения в других людях
-            </p>
-            <div class="quote">
-                "Всё, что нас раздражает в других, может привести нас к пониманию самих себя" — Карл Густав Юнг
-            </div>
-        </section>
+        <h2>Зеркало в тени леса</h2>
 
-        <section id="ch1" class="chapter chapter-1">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава первая. Безупречность</h2>
-            [cite_start]<p>Марина Светлова сидела в своём кабинете на сорок втором этаже, глядя на город через панорамные окна[cite: 787]. Директор крупнейшего благотворительного фонда, лауреат премии "Женщина года", мать двоих детей. [cite_start]Сорок три года безупречной репутации[cite: 788].</p>
-            [cite_start]<p>На столе лежало заявление об увольнении от Кати Морозовой — её помощницы последние пять лет[cite: 789]. [cite_start]"По семейным обстоятельствам", — сухо значилось в графе "причина"[cite: 790]. Но Марина помнила глаза девочки вчера утром. [cite_start]Глаза загнанного зверя[cite: 790].</p>
-            <div class="quote">
-                [cite_start]— Я больше не могу, — шептала Катя, не поднимая взгляд[cite: 791]. — Вы... вы везде видите подвох. В каждом моём слове, в каждом движении. [cite_start]Я не знаю, как вам угодить[cite: 792].
-            </div>
-            [cite_start]<p>— Катя, милая, — отвечала тогда Марина своим обычным мягким голосом, — я просто хочу, чтобы всё было идеально[cite: 793]. Наш фонд помогает детям, понимаешь? [cite_start]Мы не можем позволить себе ошибок[cite: 794].</p>
-            [cite_start]<p>Но девочка только покачала головой и вышла[cite: 794].</p>
-            <p><em>Неблагодарная</em>, — подумала тогда Марина. [cite_start]<em>Я дала ей шанс, научила всему, а она...</em> [cite: 795]</p>
-            [cite_start]<p>Теперь, в тишине кабинета, эта мысль почему-то не приносила облегчения[cite: 795].</p>
-            <p>За пять лет сменилось семь помощников. За последние два года из отдела ушли трое лучших сотрудников. [cite_start]Все "по семейным обстоятельствам"[cite: 796]. [cite_start]Все с одинаковым выражением усталости в глазах[cite: 797].</p>
-            [cite_start]<p>Марина встала, подошла к зеркалу в углу кабинета[cite: 797]. [cite_start]Отражение показало ей женщину с безупречной укладкой, дорогим костюмом и улыбкой, которая никогда не сползала с лица[cite: 798]. [cite_start]Даже наедине с собой[cite: 799].</p>
-            <div class="quote">
-                — В чём дело со мной? [cite_start]— шепнула она зеркалу[cite: 799].<br>
-                [cite_start]Зеркало молчало[cite: 799].
-            </div>
-        </section>
+        <h3>Глава I. Прибытие</h3>
+        <p>Электричка останавливалась в Ольховке только по требованию. Доктор Мирра Светлова вышла на пустую платформу с единственным чемоданом и папкой документов, которая казалась тяжелее багажа. Август 2024. Шесть месяцев после того, как её имя исчезло из всех научных публикаций института.</p>
+        <p>Детский психологический центр «Рябинушка» стоял на краю села, окружённый берёзами и запахом скошенной травы. Директор Елена Петровна встретила её у входа — женщина лет пятидесяти с внимательными глазами и крепким рукопожатием.</p>
+        <p>— Мы рады, что вы согласились. Дети особенные, работа непростая. Но думаю, для вас это именно то, что нужно.</p>
+        <p>Мирра кивнула, не объясняя, что выбора не было. После того как весь её отдел в институте поверил словам коллеги о том, что она присваивает чужие исследования и манипулирует данными, остался только этот заброшенный центр для детей с травмами.</p>
 
-        <section id="ch2" class="chapter chapter-2">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава вторая. Трещина</h2>
-            <p>Домой Марина ехала в привычном состоянии контролируемого напряжения. [cite_start]По дороге прокручивала день: что можно было сделать лучше, кого нужно поправить завтра, какие недочёты устранить[cite: 800].</p>
-            <p>Восемнадцатилетний сын Денис встретил её в прихожей. [cite_start]Высокий, худой, с глазами, в которых она всё чаще видела отстранённость[cite: 801].</p>
-            [cite_start]<p>— Мам, нужно поговорить[cite: 802].<br>
-            — Конечно, солнышко. [cite_start]Только дай переодеться[cite: 802].<br>
-            [cite_start]— Нет, сейчас[cite: 802].</p>
-            [cite_start]<p>Что-то в его голосе заставило её остановиться[cite: 803].</p>
-            [cite_start]<p>— Я не поступаю в медицинский[cite: 803].</p>
-            [cite_start]<p>Марина почувствовала, как внутри всё сжимается в знакомый узел контроля[cite: 804].</p>
-            <p>— Денис, мы это уже обсуждали. Врач — это престижная профессия, стабильность, возможность помогать людям. [cite_start]Как и я[cite: 804].</p>
-            <p>— Как ты? [cite_start]— Глаза сына потемнели[cite: 805]. [cite_start]— Мам, ты знаешь, что говорят про тебя в фонде? [cite: 805]</p>
-            [cite_start]<p>— Что говорят? [cite: 805]</p>
-            <p>— Что ты... что ты разрушаешь людей. Что от твоей помощи все убегают. [cite_start]Что ты видишь врагов там, где их нет[cite: 807].</p>
-            [cite_start]<p>Марина почувствовала, как мир накренивается[cite: 807].</p>
-            [cite_start]<p>— Кто тебе это сказал? [cite: 808]</p>
-            <p>— Неважно кто. Важно, что это правда, мам. [cite_start]Я вижу, как ты дома[cite: 808]. [cite_start]Как ты находишь недостатки во всём[cite: 808]. [cite_start]В каждом слове папы, в каждой моей оценке[cite: 808]. [cite_start]Как ты... [cite: 808]</p>
-            <p>— Я забочусь! [cite_start]— голос Марины сорвался[cite: 809]. [cite_start]— Я хочу, чтобы у вас всё было идеально! [cite: 810]</p>
-            <div class="quote">
-                [cite_start]— А кто сказал, что мы хотим твоей идеальности? [cite: 810]
-            </div>
-            [cite_start]<p>Денис развернулся и ушёл в свою комнату[cite: 811]. [cite_start]Хлопок двери прозвучал как выстрел[cite: 811]. [cite_start]Марина осталась стоять в прихожей, глядя на закрытую дверь[cite: 812]. [cite_start]Впервые за много лет она почувствовала, что контроль ускользает из рук[cite: 812].</p>
-        </section>
+        <h3>Глава II. Лисёнок</h3>
+        <p>Утром следующего дня ей представили первого подопечного. Восьмилетний Ваня сидел в углу игровой комнаты, сжав в руках игрушечную лису. Рыжие волосы, веснушки, глаза цвета лесного мха.</p>
+        <p>— Он не говорит с января, — тихо сказала воспитательница Анна. — После того как дедушка... После похорон. Родители не справляются, привезли сюда на лето.</p>
+        <p>Мирра опустилась на корточки рядом с мальчиком. Ваня поднял глаза — в них было что-то дикое, настороженное.</p>
+        <p>— Красивая лиса, — сказала она просто. — Как её зовут?</p>
+        <p>Мальчик молчал, но прижал игрушку к груди крепче.</p>
+        <p>Следующие дни Мирра просто сидела рядом с ним, не принуждая к контакту. Читала вслух сказки, рисовала, играла в конструктор. Иногда чувствовала на себе его взгляд — изучающий, недоверчивый.</p>
+        <p>На четвёртый день Ваня вдруг сказал:</p>
+        <p>— Рыжик.</p>
+        <p>— Что?</p>
+        <p>— Лиса. Рыжик.</p>
 
-        <section id="ch3" class="chapter chapter-3">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава третья. Зеркало</h2>
-            <p>Ночью Марина не могла уснуть. [cite_start]Она ворочалась в кровати, пока муж тихо сопел рядом[cite: 813]. [cite_start]Наконец встала и прошла в кабинет[cite: 814].</p>
-            [cite_start]<p>На столе лежала книга, которую дарила ей коллега год назад — что-то о психологии Юнга[cite: 814]. Марина тогда лишь вежливо поблагодарила. [cite_start]Психология казалась ей наукой для слабаков[cite: 815].</p>
-            [cite_start]<p>Теперь она открыла книгу наугад[cite: 815].</p>
-            <div class="quote">
-                [cite_start]"Тень — это та часть личности, которую мы не хотим видеть. Но чем сильнее мы её отрицаем, тем сильнее она проявляется в нашем отношении к другим. Мы видим в них то, что не можем принять в себе[cite: 816]."
-            </div>
-            [cite_start]<p>Марина перечитала абзац дважды[cite: 817]. [cite_start]Потом ещё раз[cite: 817].</p>
-            [cite_start]<p><em>В каждом моём сотруднике я вижу лень, безответственность, желание всё сделать кое-как[cite: 817]. [cite_start]В сыне — легкомыслие и неблагодарность[cite: 818]. [cite_start]В муже — равнодушие[cite: 818].</em></p>
-            [cite_start]<p><em>А что, если...</em> [cite: 818]</p>
-            [cite_start]<p>Она встала, подошла к зеркалу в кабинете[cite: 819]. На этот раз смотрела внимательно. [cite_start]Очень внимательно[cite: 819].</p>
-            [cite_start]<p><em>Лень.</em> Когда она последний раз делала что-то просто ради удовольствия? [cite: 819] [cite_start]Когда последний раз позволяла себе "ничего не делать"? [cite: 820]</p>
-            [cite_start]<p><em>Безответственность.</em> А сколько раз она перекладывала ответственность за своё настроение на других? [cite: 820] [cite_start]"Они меня расстраивают", "они меня подводят"... [cite: 821]</p>
-            [cite_start]<p><em>Равнодушие.</em> Когда она последний раз спросила мужа, как дела, и действительно выслушала ответ, а не ждала паузы, чтобы рассказать о своих проблемах? [cite: 821]</p>
-            [cite_start]<p>Зеркало показывало ей лицо усталой женщины, которая много лет играла роль безупречности, забыв, кто она на самом деле[cite: 822].</p>
-        </section>
+        <h3>Глава III. Отражения</h3>
+        <p>Прошёл месяц. Ваня постепенно оттаивал — играл с другими детьми, смеялся, рисовал яркие картинки. Но Мирра чувствовала нарастающее беспокойство. Что-то в его поведении напоминало ей саму себя в детстве — ту маленькую девочку, которая всегда была «хорошей», никого не расстраивала, всё понимала.</p>
+        <p>Слишком понимала.</p>
+        <p>Однажды вечером, задержавшись в центре, она услышала из игровой комнаты тихий разговор. Ваня сидел с лисёнком Рыжиком и... говорил сам с собой разными голосами.</p>
+        <p>— Ты плохой мальчик, — грубо бросал он игрушке. — Из-за тебя дедушка умер.</p>
+        <p>— Я не хотел, — отвечал своим обычным голосом.</p>
+        <p>— Хотел! Ты же радовался, что не надо к нему ездить каждые выходные. Ты же думал: «Хорошо бы он исчез». И он исчез!</p>
+        <p>Мирра замерла. Мальчик проигрывал внутренний диалог со своей виной, со своей тенью. Тем голосом, каким взрослые говорили с ним, обвиняя во всех семейных бедах.</p>
+        <p>Она тихо вошла в комнату.</p>
+        <p>— Ваня, можно с вами поговорить? С тобой и с Рыжиком?</p>
 
-        <section id="ch4" class="chapter chapter-4">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава четвёртая. Метод зеркальных вопросов</h2>
-            [cite_start]<p>На следующий день Марина записалась к психологу[cite: 823]. [cite_start]Алина Ермолова работала в центре, который сотрудничал с их фондом[cite: 824]. [cite_start]Женщина лет пятидесяти, с добрыми глазами и удивительным спокойствием[cite: 824].</p>
-            [cite_start]<p>— Расскажите, что вас привело[cite: 825].</p>
-            <p>Марина рассказала. [cite_start]О сыне, о сотрудниках, о том чувстве, будто она стоит посреди разрушенного города и не понимает, кто его разрушил[cite: 825].</p>
-            <div class="technique-box">
-                <h3>Техника "Зеркальные вопросы"</h3>
-                [cite_start]<p>— У меня есть для вас упражнение, — сказала Алина[cite: 826]. [cite_start]— Называется "Зеркальные вопросы"[cite: 826].</p>
-                [cite_start]<p>Каждый раз, когда вы ловите себя на сильной эмоции по отношению к другому человеку, задавайте себе три вопроса[cite: 827]:</p>
-                <ul>
-                    [cite_start]<li><strong>Что именно меня так задевает в этом человеке?</strong> [cite: 828]</li>
-                    [cite_start]<li><strong>Где эта же черта живёт во мне?</strong> [cite: 829]</li>
-                    [cite_start]<li><strong>Чего я боюсь увидеть в себе?</strong> [cite: 829]</li>
-                </ul>
-            </div>
-            <div class="quote">
-                [cite_start]— Это не означает, что все ваши наблюдения неверны, — добавила Алина[cite: 829]. [cite_start]— Но часто наша эмоциональная реакция говорит больше о нас, чем о других[cite: 830].
-            </div>
-            [cite_start]<p>— А если я правда вижу недостатки? [cite: 830]</p>
-            <p>— Тогда вы сможете говорить о них спокойно, без эмоций. [cite_start]Проверьте сами[cite: 831].</p>
-        </section>
+        <h3>Глава IV. Техника «Голосов в круге»</h3>
+        <p>— Знаешь, что я заметила? — Мирра села напротив мальчика, который сжал лиса в руках. — У Рыжика, кажется, есть два голоса. Один добрый, а другой... злой.</p>
+        <p>Ваня молчал, но глаза его расширились.</p>
+        <p>— Такое бывает у всех. У меня тоже есть два голоса. Хочешь, я покажу?</p>
+        <p>Она взяла две подушки, положила их напротив друг друга.</p>
+        <p>— Вот тут сидит добрая Мирра, — она указала на одну подушку. — А тут злая Мирра. Добрая говорит: «Ты хороший психолог, ты помогаешь детям». А злая отвечает: «Ты обманщица! Из-за тебя люди пострадали!»</p>
+        <p>Ваня смотрел во все глаза.</p>
+        <p>— И знаешь что? Я долго думала, что злая Мирра — это правда обо мне. Но потом поняла: злая Мирра — это не я. Это голос тех людей, которые когда-то говорили со мной плохо. Он просто поселился у меня в голове.</p>
+        <p>Мирра пересела к «злой» подушке и изменила голос, сделав его резче:</p>
+        <p>— А теперь ты сидишь с каким-то оборванцем и рассказываешь сказки!</p>
+        <p>Потом вернулась к «доброй»:</p>
+        <p>— Я сижу с мальчиком, которому больно. И я его понимаю.</p>
+        <p>Ваня медленно поставил лиса между подушками.</p>
+        <p>— А Рыжик где сидит?</p>
+        <p>— А Рыжик, наверное, посередине. Он слушает оба голоса и решает, какому верить.</p>
 
-        <section id="ch5" class="chapter chapter-5">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава пятая. Первые открытия</h2>
-            [cite_start]<p>Домой Марина шла пешком, обдумывая разговор[cite: 832]. [cite_start]В метро напротив неё села девушка с ярко-розовыми волосами, которая громко разговаривала по телефону о своих романтических проблемах[cite: 832].</p>
-            [cite_start]<p><em>Какая несерьёзная</em>, — подумала Марина автоматически, и тут же вспомнила о вопросах[cite: 833].</p>
-            <div class="technique-box">
-                <h3>Практическое применение:</h3>
-                <ul>
-                    [cite_start]<li><em>Что меня задевает?</em> Несерьёзность, легкомыслие[cite: 834].</li>
-                    <li><em>Где эта черта во мне?</em> Когда я последний раз была легкомысленной? [cite_start]Когда позволяла себе просто жить, не планируя и не контролируя каждый шаг? [cite: 835]</li>
-                    <li><em>Чего боюсь увидеть?</em> Что если я сниму маску ответственности, то окажусь... пустой? [cite_start]Никчёмной? [cite: 836] [cite_start]Что если без постоянного контроля я стану... как эта девочка? [cite: 837]</li>
-                </ul>
-            </div>
-            [cite_start]<p>Девушка засмеялась в трубку — звонко, искренне[cite: 837]. [cite_start]Марина поймала себя на мысли: <em>А когда я последний раз так смеялась?</em> [cite: 838]</p>
-            [cite_start]<p>Дома её ждал Денис[cite: 838]. [cite_start]Он сидел на кухне, делал домашнее задание по литературе[cite: 839].</p>
-            [cite_start]<p>— Привет, — сказала она осторожно[cite: 839].</p>
-            [cite_start]<p>— Привет[cite: 840].</p>
-            [cite_start]<p>Обычно она бы сейчас проверила, что он делает, дала бы советы, поправила бы осанку[cite: 840]. [cite_start]Вместо этого спросила[cite: 840]:</p>
-            [cite_start]<p>— Что читаешь? [cite: 841]</p>
-            <p>— Достоевского. [cite_start]"Преступление и наказание"[cite: 841].</p>
-            [cite_start]<p>— И как? [cite: 841]</p>
-            [cite_start]<p>Денис удивлённо посмотрел на неё[cite: 842].</p>
-            [cite_start]<p>— Странный вопрос от тебя[cite: 842].</p>
-            [cite_start]<p>— Почему? [cite: 842]</p>
-            [cite_start]<p>— Обычно ты спрашиваешь, какие оценки я получил и сделал ли я все упражнения[cite: 843].</p>
-            <p>Марина почувствовала укол. [cite_start]Но не защищалась[cite: 843].</p>
-            [cite_start]<p>— А что, если сегодня я просто хочу узнать, что ты думаешь о Раскольникове? [cite: 844]</p>
-            [cite_start]<p>Денис помолчал, потом осторожно улыбнулся[cite: 844]:</p>
-            [cite_start]<p>— Он мне напоминает тебя[cite: 844].</p>
-            [cite_start]<p>— Меня?! [cite: 845]</p>
-            <p>— Он тоже думает, что знает, как должно быть. [cite_start]И тоже готов разрушить всё вокруг ради своей правильности[cite: 845].</p>
-            [cite_start]<p><em>Зеркальный вопрос номер один: что меня задевает?</em> Обвинение в жестокости, в том, что я разрушаю людей ради своих принципов[cite: 845]. [cite_start]<em>Номер два: где это во мне?</em> Сколько людей ушло из-за моего стремления к идеальности? [cite: 846] [cite_start]Сколько отношений я разрушила, требуя соответствовать своим стандартам? [cite: 847]</p>
-            [cite_start]<p><em>Номер три: чего боюсь?</em> Что если я не буду требовательной, всё развалится[cite: 847]. [cite_start]Что если я приму несовершенство, то стану соучастницей хаоса[cite: 848].</p>
-            <p>— Знаешь, — сказала она медленно, — а может, мы сходим в театр на выходных? Посмотрим что-то не полезное. [cite_start]Что-то просто красивое[cite: 849].</p>
-            [cite_start]<p>Денис отложил ручку и внимательно посмотрел на мать[cite: 849].</p>
-            [cite_start]<p>— Мам, ты в порядке? [cite: 849]</p>
-            <div class="quote">
-                — Нет, — честно ответила Марина. [cite_start]— Но я учусь[cite: 850].
-            </div>
-        </section>
+        <h3>Глава V. Метод «Свидетель»</h3>
+        <p>Через неделю Мирра предложила Ване новую игру.</p>
+        <p>— Помнишь, мы говорили про два голоса? А есть ещё третий. Он не добрый и не злой. Он просто... смотрит. Как мудрая сова.</p>
+        <p>Она достала мягкую игрушку — сову с большими жёлтыми глазами.</p>
+        <p>— Сова Соня всё видит, но не судит. Она просто замечает. Хочешь попробовать быть совой?</p>
+        <p>Ваня взял игрушку в руки.</p>
+        <p>— Когда злой голос говорит Рыжику гадости, сова может сказать: «Я замечаю, что сейчас звучит голос, который хочет сделать больно. Интересно, откуда он взялся?»</p>
+        <p>Мальчик задумался.</p>
+        <p>— Этот голос... он как у папы, когда он пьёт.</p>
+        <p>— Ага. Значит, это не твой голос. Это папин голос, который попал к тебе в голову. А что думает сова?</p>
+        <p>— Сова думает... — Ваня поднял игрушку к глазам, — сова думает, что дедушка умер не из-за Рыжика. Дедушки иногда умирают, потому что болеют.</p>
 
-        <section id="ch6" class="chapter chapter-6">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава шестая. Техника "Список теней"</h2>
-            [cite_start]<p>На следующем сеансе Алина предложила ещё одно упражнение[cite: 851].</p>
-            [cite_start]<p>— Составьте список людей, которые вас раздражают[cite: 852]. Живых или из книг, фильмов. Неважно. [cite_start]Главное — те, кто вызывает сильную эмоциональную реакцию[cite: 852].</p>
-            <div class="technique-box">
-                <h3>Техника "Список теней"</h3>
-                <ul>
-                    [cite_start]<li>Составьте список людей, которые вас раздражают [cite: 852]</li>
-                    [cite_start]<li>Напротив каждого напишите качество, которое вас бесит [cite: 854]</li>
-                    [cite_start]<li>Честно найдите это качество в себе [cite: 854]</li>
-                    [cite_start]<li>Признайте: "У меня тоже есть эта черта" [cite: 854]</li>
-                </ul>
-            </div>
-            [cite_start]<p>Марина составила свой список и обнаружила болезненную правду: каждое качество, которое она осуждала в других, жило и в ней самой[cite: 855].</p>
-            [cite_start]<p><em>Катя — безответственность.</em> А сколько раз Марина перекладывала ответственность за своё настроение на других? [cite: 855] [cite_start]"Они меня бесят", "из-за них у меня стресс"... [cite: 856]</p>
-            <p><em>Сосед — эгоизм.</em> А разве её требования к идеальности не эгоистичны? [cite_start]Разве она думает о том, каково другим соответствовать её стандартам? [cite: 857]</p>
-            [cite_start]<p><em>Актриса — истеричность.</em> Марина вспомнила свои внутренние монологи, когда что-то шло не по плану[cite: 858]. [cite_start]Разве это не истерика, только направленная внутрь? [cite: 859]</p>
-            <p><em>Ольга — зависть.</em> Сердце кольнуло. [cite_start]Да, она завидовала Ольге[cite: 859]. [cite_start]Её лёгкости в отношениях, способности ошибаться и не рассыпаться от этого в прах[cite: 860].</p>
-            <p><em>Денис — неблагодарность.</em> А часто ли она сама благодарила? [cite_start]Мужа за то, что он просто рядом? [cite: 861] [cite_start]Сына за то, что он растёт честным человеком, несмотря на её контроль? [cite: 862]</p>
-            <div class="quote">
-                — Что чувствуете? [cite_start]— спросила Алина[cite: 863].<br>
-                — Стыд, — тихо сказала Марина. — И... облегчение? [cite_start]Как будто я много лет несла тяжёлый рюкзак и только сейчас поняла, что могу его снять[cite: 863].
-            </div>
-        </section>
+        <h3>Глава VI. Ритуал «Возвращения тени»</h3>
+        <p>В начале сентября, когда лета почти не осталось, Мирра решилась на самый сложный эксперимент. Не только с Ваней, но и с собой.</p>
+        <p>— У нас есть последнее задание, — сказала она мальчику. — Мы должны вернуть злые голоса тем, кому они принадлежат.</p>
+        <p>Они вышли в лес за центром. Мирра принесла с собой блокнот и ручку.</p>
+        <p>— Сейчас мы напишем письмо. Не чтобы отправить, а чтобы сказать правду.</p>
+        <p>Ваня неуверенно взял ручку.</p>
+        <p>— Пиши то, что злой голос всегда говорит Рыжику.</p>
+        <p>Мальчик старательно выводил: «Ты плохой. Ты виноват. Из-за тебя дедушка умер.»</p>
+        <p>— А теперь напиши, кому принадлежат эти слова.</p>
+        <p>«Папе. Когда он злой.»</p>
+        <p>— Теперь напиши ответ от себя.</p>
+        <p>Ваня задумался, потом написал: «Я не виноват. Я скучаю по дедушке. Но это не моя вина.»</p>
+        <p>Мирра взяла свой лист. Написала быстро, не задумываясь:</p>
+        <blockquote>Вы говорили, что я присваиваю чужие идеи. Что я манипулирую. Вы поверили одному человеку против всех фактов. Возвращаю вам ваш страх и вашу тень. Это не мои.</blockquote>
+        <p>Они сложили листы в маленький костёр из сухих веток.</p>
+        <p>— Огонь всё превращает, — сказала Мирра, поджигая спичку. — Злость в дым, страх в пепел, а боль в мудрость.</p>
+        <p>Бумага сгорала, унося с собой чужие голоса.</p>
 
-        <section id="ch7" class="chapter chapter-7">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава седьмая. Практика "Принятие тени"</h2>
-            [cite_start]<p>— Теперь самое важное, — сказала Алина на третьем сеансе[cite: 864]. — Признать тень — это только половина работы. Вторая половина — принять её. [cite_start]Не полюбить, не оправдать[cite: 865]. [cite_start]Принять как часть себя[cite: 866].</p>
-            <div class="technique-box">
-                <h3>Диалог с тенью</h3>
-                [cite_start]<p>Каждый вечер, перед сном, говорите с той частью себя, которую обычно отвергаете[cite: 866].</p>
-                <p>Говорите вслух или пишите. [cite_start]Начинайте так: "Привет, моя ленивая часть" или "Привет, моя завистливая часть"[cite: 867]. [cite_start]Выясните, что она хочет сказать[cite: 868].</p>
-            </div>
-            [cite_start]<p>В первый вечер Марина чувствовала себя идиоткой, разговаривая с зеркалом[cite: 868]:</p>
-            [cite_start]<p>— Привет, моя... ленивая часть[cite: 869].</p>
-            [cite_start]<p>Молчание[cite: 870].</p>
-            [cite_start]<p>— Ну, что ты хочешь? [cite: 870]</p>
-            <div class="quote">
-                [cite_start]*"Отдохнуть,"* — вдруг подумала она чужим голосом[cite: 870]. [cite_start]*"Просто полежать и ни о чём не думать. Посмотреть глупый фильм. Поесть мороженого, не считая калории."* [cite: 871]
-            </div>
-            [cite_start]<p>— Но если я буду лениться, всё развалится[cite: 871].</p>
-            [cite_start]<p>— *"А что, если не развалится? Что, если мир выдержит один день без твоего контроля?"* [cite: 872] [cite_start]Марина задумалась[cite: 872]. [cite_start]А ведь правда — что если? [cite: 873]</p>
-            [cite_start]<p>На следующий вечер[cite: 873]:</p>
-            [cite_start]<p>— Привет, моя завистливая часть[cite: 873].</p>
-            <div class="quote">
-                *"Я устала быть идеальной,"* — сразу ответил внутренний голос. [cite_start]*"Я завидую тем, кто может быть просто собой. Без масок."* [cite: 874]
-            </div>
-        </section>
+        <h3>Глава VII. Метод «Внутреннего компаса»</h3>
+        <p>В последний день перед отъездом Вани домой Мирра подарила ему маленький компас.</p>
+        <p>— Это не обычный компас, — сказала она. — Он показывает не на север. Он показывает на правду.</p>
+        <p>Ваня покрутил стрелку.</p>
+        <p>— Как пользоваться?</p>
+        <p>— Когда услышишь голос, который говорит тебе плохие вещи, достань компас. Спроси: «Это мой голос или чужой?» Если стрелка дрожит — значит, чужой. Если стоит ровно — твой.</p>
+        <p>— А если мой?</p>
+        <p>— Тогда послушай, что он хочет сказать. Может, это голос твоей совести, а может, твоих желаний. Но это точно не голос, который хочет сделать больно.</p>
+        <p>Мальчик спрятал компас в карман.</p>
+        <p>— А у тебя есть такой?</p>
+        <p>Мирра показала свой — старый латунный компас, потемневший от времени.</p>
+        <p>— Я пользуюсь им всю жизнь. Только недавно научилась различать стрелки.</p>
 
-        <section id="ch8" class="chapter chapter-8">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава восьмая. Техника "Эмоциональный детектив"</h2>
-            [cite_start]<p>Алина научила Марину ещё одному методу: **"Эмоциональный детектив"**[cite: 865].</p>
-            <div class="technique-box">
-                <h3>Эмоциональный детектив</h3>
-                [cite_start]<p>Когда чувствуете сильную эмоцию по отношению к кому-то, представьте себя детективом[cite: 865]. Задача — найти не виновного, а причину. [cite_start]Спросите себя[cite: 866]:</p>
-                <ul>
-                    [cite_start]<li>Что конкретно произошло? [cite: 866]</li>
-                    [cite_start]<li>Что я об этом подумала? [cite: 866]</li>
-                    [cite_start]<li>Что почувствовала? [cite: 867]</li>
-                    [cite_start]<li>Как отреагировала? [cite: 867]</li>
-                    [cite_start]<li>Какая моя потребность не была удовлетворена? [cite: 867]</li>
-                    [cite_start]<li>Где я могу удовлетворить эту потребность сама? [cite: 868]</li>
-                </ul>
-            </div>
-            [cite_start]<p>Как-то вечером муж пришёл домой и, не поздоровавшись, прошёл к холодильнику[cite: 868]. [cite_start]Марина почувствовала знакомое раздражение: <em>Невнимательный, равнодушный...</em> [cite: 869] Стоп. [cite_start]Детектив[cite: 869].</p>
-            [cite_start]<p><em>Что произошло?</em> Муж не поздоровался[cite: 869].</p>
-            [cite_start]<p><em>Что подумала?</em> Он меня не замечает, я ему неважна[cite: 870].</p>
-            [cite_start]<p><em>Что почувствовала?</em> Обиду, одиночество[cite: 870].</p>
-            [cite_start]<p><em>Как отреагировала?</em> Хотела сказать что-то колкое[cite: 871].</p>
-            [cite_start]<p><em>Какая потребность?</em> Внимание, признание, близость[cite: 871].</p>
-            <p><em>Где могу удовлетворить сама?</em> А что, если просто подойти и обнять его? [cite_start]Сказать, что скучала? [cite: 872]</p>
-            [cite_start]<p>Она подошла к мужу сзади, обняла за плечи[cite: 872]:</p>
-            <div class="quote">
-                [cite_start]— Привет, как день? [cite: 873]
-            </div>
-            [cite_start]<p>Он обернулся, его лицо расплылось в удивлённой и счастливой улыбке[cite: 873].</p>
-            <p>— Привет, любимая. Всё хорошо. [cite_start]А у тебя? [cite: 873]</p>
-            <p>Марина вдруг поняла, что муж был просто уставшим после долгого рабочего дня. [cite_start]А её реакция была лишь отражением её собственной потребности в близости, которую она могла удовлетворить сама[cite: 874].</p>
-        </section>
+        <h3>Глава VIII. Техника «Ежедневного свидетельства»</h3>
+        <p>Через месяц после отъезда Вани Мирра разработала для себя и других детей центра практику, которую назвала «Пять минут правды».</p>
+        <p>Каждый вечер, перед сном, она записывала в специальную тетрадь ответы на четыре вопроса:</p>
+        <ul>
+            <li>Какой голос сегодня говорил громче всего?</li>
+            <li>Чей это был голос? (мой или чужой)</li>
+            <li>Что мой внутренний свидетель заметил в этой ситуации?</li>
+            <li>Что бы я сказал этому голосу, если бы не боялся?</li>
+        </ul>
+        <p>Первые записи были болезненными:</p>
+        <p>«Голос говорил: "Ты никому не нужна, провалилась как учёный". Это голос моей матери из детства. Свидетель замечает: я помогла трём детям сегодня почувствовать себя лучше. Голосу я бы сказала: "Ты ошибаешься. Моя ценность не в признании других"».</p>
+        <p>Но постепенно записи становились спокойнее, яснее.</p>
 
-        <section id="ch9" class="chapter chapter-9">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Глава девятая. Прощение</h2>
-            [cite_start]<p>Самым трудным оказалось простить себя за годы, когда она не видела своих проекций[cite: 875]. [cite_start]За людей, которых оттолкнула[cite: 875]. [cite_start]За отношения, которые разрушила требованиями к идеальности[cite: 876].</p>
-            [cite_start]<p>— Я столько людей ранила, — говорила она Алине[cite: 876]. [cite_start]— Как с этим жить? [cite: 877]</p>
-            <p>— А как вы думаете, что чувствовали те люди, когда вы их критиковали? [cite_start]— Боль[cite: 877]. Обиду. [cite_start]Желание защищаться или уйти[cite: 877].</p>
-            <div class="quote">
-                [cite_start]— То есть то же самое, что чувствуете сейчас вы, критикуя себя за прошлое? [cite: 878]
-            </div>
-            [cite_start]<p>Марина задумалась[cite: 878]. [cite_start]— Получается, я делаю с собой то же самое, что делала с ними? [cite: 879]</p>
-            [cite_start]<p>— А как вы хотели бы, чтобы к вам относились тогда, когда вы ошибались? [cite: 879]</p>
-            <p>— С пониманием. [cite_start]С терпением[cite: 880]. [cite_start]С верой в то, что я могу измениться[cite: 880].</p>
-            <div class="quote">
-                [cite_start]— Попробуйте отнестись так к себе сейчас[cite: 881].
-            </div>
-            [cite_start]<p>Алина дала ей последнее упражнение: **"Письмо себе из будущего"**[cite: 881].</p>
-            <div class="technique-box">
-                <h3>Письмо себе из будущего</h3>
-                [cite_start]<p>Представьте себя через пять лет — мудрую, принявшую свою тень, живущую в согласии с собой[cite: 882]. [cite_start]Что бы эта женщина сказала вам сейчас? [cite: 882]</p>
-            </div>
-            [cite_start]<p>Марина писала: <em>"Дорогая моя прошлая, ты была напугана[cite: 883]. Ты думала, что если не будешь идеальной, тебя никто не будет любить. [cite_start]Я понимаю твой страх, но это неправда[cite: 883]. Ты заслуживаешь любви просто за то, что ты есть. Прости себя. Прости их. [cite_start]Отпусти это и живи"</em>[cite: 884].</p>
-        </section>
+        <h3>Глава IX. Письмо через полгода</h3>
+        <p>Январь 2025. Письмо от Вани:</p>
+        <p>«Дорогая Мирра! Мама разрешила мне написать. У меня всё хорошо. Я хожу в школу и у меня есть друг Серёжа. Рыжик живёт у меня на полке, но я с ним больше не ругаюсь. Компас работает! Вчера папа кричал на меня, но я достал компас, и стрелка задрожала. Значит, это его голос, не мой. А мой голос сказал: "Папа устал, но это не про меня". Ещё я хожу к психологу тёте Наташе. Она тоже знает про голоса. А как у вас дела? Вы ещё помогаете детям? Мама говорит, что вы очень хороший доктор. Ваш Ваня. PS: Совы и правда мудрые!»</p>
 
-        <section id="epilogue" class="chapter chapter-epilogue">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Эпилог. Интеграция</h2>
-            [cite_start]<p>Прошёл год[cite: 885]. [cite_start]Марина всё ещё работала в фонде, всё ещё стремилась к качеству[cite: 885]. [cite_start]Но теперь она умела различать здоровый перфекционизм и разрушительный[cite: 886].</p>
-            <p>Здоровый перфекционизм спрашивал: "Как сделать это лучше?" [cite_start]Разрушительный утверждал: "Если не идеально — значит, плохо." [cite: 886] [cite_start]Здоровый перфекционизм видел в ошибке возможность учиться[cite: 887]. [cite_start]Разрушительный видел в ошибке — поражение[cite: 887].</p>
-            <p>Она больше не увольняла сотрудников. [cite_start]Она училась быть... человечнее[cite: 888].</p>
-            <p>— Знаешь, — сказал однажды Денис, — ты изменилась. [cite_start]Стала... человечнее что ли[cite: 889].</p>
-            [cite_start]<p>— Это хорошо или плохо? [cite: 889]</p>
-            [cite_start]<p>— Хорошо[cite: 889]. Очень хорошо. [cite_start]Теперь с тобой можно разговаривать, не боясь сказать что-то не то[cite: 890].</p>
-            <div class="quote">
-                [cite_start]— А раньше боялся? [cite: 890]<br>
-                — Постоянно. Ты была как... как очень красивая, но холодная статуя. [cite_start]Идеальная, но недоступная[cite: 891].
-            </div>
-            <p><em>Персона</em>, — подумала Марина. [cite_start]<em>Я прятала себя настоящую за маской идеальности и удивлялась, почему все держатся на расстоянии</em>[cite: 891].</p>
-            <p>Она поняла, что мир не развалился, когда она перестала всё контролировать. Наоборот, он стал ярче и теплее. [cite_start]Она сняла с себя доспехи идеальности и, наконец, смогла увидеть себя — со всеми своими тенями и светом — в отражениях других[cite: 892]. [cite_start]И это было самое прекрасное отражение, которое она когда-либо видела[cite: 892].</p>
-        </section>
+        <h3>Глава X. Возвращение</h3>
+        <p>Весной 2025 года Мирре пришло письмо от института. Новое руководство приглашало её вернуться — коллега, который строил против неё обвинения, оказался замешан в реальных нарушениях, а её исследования признали прорывными.</p>
+        <p>Мирра держала письмо и чувствовала... удивительную тишину. Не радость, не злорадство. Тишину.</p>
+        <p>Вечером она написала в своей тетради:</p>
+        <blockquote>*«Какой голос говорит громче всего?
+        <br>Голос, который хочет вернуться и доказать всем, что они ошибались.
+        <br>Чей это голос?
+        <br>Голос старой Мирры, которая жила для одобрения других.
+        <br>Что замечает свидетель?
+        <br>Я счастлива здесь. Мои дети выздоравливают. Я нашла свой путь.
+        <br>Что я скажу голосу?
+        <br>Спасибо за желание защитить меня. Но мне больше не нужно ничего доказывать».*</blockquote>
 
-        <section id="techniques" class="chapter chapter-techniques">
-            <div class="mirror-reflection"></div>
-            <div class="emotional-indicator"></div>
-            <h2>Суммирование методик</h2>
-            [cite_start]<p>Для тех, кто готов начать свой путь к целостности и подлинности, вот краткое изложение методик, описанных в произведении[cite: 893].</p>
-            <div class="technique-box">
-                <h3>1. Техника "Зеркальные вопросы"</h3>
-                <p>При сильных эмоциях по отношению к другому человеку, спросите себя:</p>
-                <ul>
-                    [cite_start]<li>Что именно меня так задевает в этом человеке? [cite: 894]</li>
-                    [cite_start]<li>Где эта же черта живёт во мне? [cite: 894]</li>
-                    [cite_start]<li>Чего я боюсь увидеть в себе? [cite: 894]</li>
-                </ul>
-            </div>
-            <div class="technique-box">
-                <h3>2. Техника "Список теней"</h3>
-                <ul>
-                    [cite_start]<li>Составьте список людей, которые вас раздражают [cite: 895]</li>
-                    [cite_start]<li>Напротив каждого напишите качество, которое вас бесит [cite: 895]</li>
-                    [cite_start]<li>Честно найдите это качество в себе [cite: 895]</li>
-                    [cite_start]<li>Признайте: "У меня тоже есть эта черта" [cite: 895]</li>
-                </ul>
-            </div>
-            <div class="technique-box">
-                <h3>3. Диалог с тенью</h3>
-                [cite_start]<p>Каждый вечер говорите с отвергаемой частью себя[cite: 896]:</p>
-                <ul>
-                    [cite_start]<li>"Привет, моя ленивая/завистливая/злая часть" [cite: 896]</li>
-                    [cite_start]<li>"Что ты хочешь мне сказать?" [cite: 897]</li>
-                    [cite_start]<li>Выслушайте без осуждения [cite: 897]</li>
-                    [cite_start]<li>Найдите здоровый способ удовлетворить её потребности [cite: 897]</li>
-                </ul>
-            </div>
-            <div class="technique-box">
-                <h3>4. Техника "Эмоциональный детектив"</h3>
-                [cite_start]<p>При сильных эмоциях исследуйте[cite: 898]:</p>
-                <ul>
-                    [cite_start]<li>Что конкретно произошло? [cite: 898]</li>
-                    [cite_start]<li>Что я об этом подумала? [cite: 898]</li>
-                    [cite_start]<li>Что почувствовала? [cite: 899]</li>
-                    [cite_start]<li>Как отреагировала? [cite: 899]</li>
-                    [cite_start]<li>Какая моя потребность не удовлетворена? [cite: 900]</li>
-                    [cite_start]<li>Как могу удовлетворить её сама? [cite: 900]</li>
-                </ul>
-            </div>
-            <div class="quote">
-                <p><strong>Помните:</strong></p>
-                <ul>
-                    [cite_start]<li>Тень — не враг, а неинтегрированная часть личности [cite: 901]</li>
-                    [cite_start]<li>То, что мы отвергаем в себе, мы проецируем на других [cite: 901]</li>
-                    [cite_start]<li>Сильная эмоциональная реакция — сигнал о проекции [cite: 902]</li>
-                </ul>
-            </div>
-        </section>
-
+        <h3>Эпилог. Метод «Благодарной тени»</h3>
+        <p>Через год центр «Рябинушка» стал методическим центром по работе с детскими травмами. Мирра разработала комплексную программу «Возвращение к себе», которая включала:</p>
+        <ol>
+            <li>Технику «Голосов в круге» — материализация внутренних диалогов через игрушки и подушки</li>
+            <li>Метод «Внутреннего свидетеля» — развитие нейтрального наблюдающего сознания</li>
+            <li>Ритуал «Возвращения тени» — символическое освобождение от чужих проекций</li>
+            <li>Практику «Внутреннего компаса» — различение своих и чужих голосов</li>
+            <li>Ежедневное «Свидетельство» — письменная рефлексия для закрепления осознанности</li>
+        </ol>
+        <p>Но самым важным оказался шестой элемент — «Благодарность тени».</p>
+        <p>— Тень — не враг, — объясняла Мирра новым сотрудникам. — Это охранник, который плохо выучил инструкцию. Он защищает нас так, как умеет. Наша задача — не уничтожить его, а переобучить.</p>
+        <p>В её кабинете появилось зеркало с надписью: «Спасибо за попытку защитить меня. Теперь я справлюсь сама».</p>
+        <p>Каждый день, глядя в отражение, Мирра благодарила все свои внутренние голоса — и светлые, и тёмные. За опыт, за уроки, за то, что привели её туда, где она нужна.</p>
+        <p>А на подоконнике по-прежнему сидели игрушки всех детей, которые прошли через её кабинет: лисёнок Рыжик, сова Соня и множество других — свидетели тысяч маленьких исцелений.</p>
+        <p>Тень больше не была врагом. Она стала союзником — тем, кто знает дорогу в темноте и может провести к свету.</p>
+        <p>Конец</p>
     </div>
-    
-    <script>
-        const chapters = document.querySelectorAll('.chapter');
-        const navItems = document.querySelectorAll('.nav-item');
-        const progressBar = document.getElementById('progressBar');
-        const reflectionMirror = document.getElementById('reflectionMirror');
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px 0px -50% 0px',
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const chapterId = entry.target.id;
-                const correspondingNavItem = document.querySelector(`.nav-item[data-chapter="${chapterId.replace('ch', '')}"]`);
-                
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    navItems.forEach(item => item.classList.remove('active'));
-                    if (correspondingNavItem) {
-                        correspondingNavItem.classList.add('active');
-                        correspondingNavItem.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-                    }
-                } else {
-                    entry.target.classList.remove('visible');
-                }
-            });
-        }, observerOptions);
-
-        chapters.forEach(chapter => {
-            observer.observe(chapter);
-        });
-
-        document.addEventListener('scroll', () => {
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (document.documentElement.scrollTop / docHeight) * 100;
-            progressBar.style.width = scrollPercent + '%';
-
-            if (scrollPercent > 20 && scrollPercent < 80) {
-                reflectionMirror.classList.add('active');
-            } else {
-                reflectionMirror.classList.remove('active');
-            }
-        });
-
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const chapterId = e.target.getAttribute('href');
-                document.querySelector(chapterId).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Initialize particles
-        const particlesContainer = document.querySelector('.floating-particles');
-        for (let i = 0; i < 50; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 3 + 1;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${Math.random() * 100}vw`;
-            particle.style.animationDuration = `${Math.random() * 15 + 10}s`;
-            particle.style.animationDelay = `${Math.random() * 10}s`;
-            particlesContainer.appendChild(particle);
-        }
-    </script>
 </body>
 </html>
